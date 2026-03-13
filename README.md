@@ -92,7 +92,7 @@ When the interview is done, type:
 | Idea | `/interview` defines your startup and generates a strategy brief |
 | Landing Page | React + Tailwind hero + features — tests pre-written, just make them pass |
 | Waiting List | Signup form + backend API — you write the tests |
-| Beyond | Finished early? Start building the actual product. |
+| MVP | Finished early? Run `/mvp` to scope and build one core product feature |
 
 ### The Workflow
 
@@ -113,6 +113,7 @@ Type these inside Claude Code:
 | `/interview` | Define your startup idea + generate a strategy brief |
 | `/strategy` | Review and edit your strategy conversationally |
 | `/start` | Start building (reads the spec, runs tests) |
+| `/mvp` | Scope one core product feature when you're ready to go beyond the landing page |
 
 ## Terminal Commands
 

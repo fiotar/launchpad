@@ -75,7 +75,8 @@ tests/
 docs/
 ├── 00_project/        # Your startup idea (filled in by /interview)
 ├── 01_landing_page/   # Phase 1 spec: server + landing page
-└── 02_waiting_list/   # Phase 2 spec: signup form + API
+├── 02_waiting_list/   # Phase 2 spec: signup form + API
+└── 03_mvp/            # Phase 3 spec: core product feature (created by /mvp)
 ```
 
 ## Design Principles
