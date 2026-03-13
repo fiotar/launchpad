@@ -80,15 +80,16 @@ docs/
 
 ## Design Principles
 
-When building the frontend, follow these principles to produce a professional result:
+When building the frontend, always read the **Design Direction** section in `docs/00_project/01_overview.md` first. The archetype, fonts, colors, mode (dark/light), border radius, and shadow style defined there drive every design decision below.
 
-- **Typography**: Use a system font stack (`font-sans` in Tailwind). Use `text-4xl` or larger for hero headings, `text-lg` for body. Ensure comfortable line height (`leading-relaxed`).
+- **Typography**: Load the heading font from Google Fonts via a `<link>` tag in `index.html`. Extend `tailwind.config.js` to add the font as a custom `fontFamily`. Use `text-4xl` or larger for hero headings, `text-lg` for body. Ensure comfortable line height (`leading-relaxed`).
 - **Spacing**: Use generous whitespace. Hero sections need `py-24` or more. Sections need `py-16` minimum. Use consistent spacing rhythm.
 - **Layout**: Max content width of `max-w-6xl` centered with `mx-auto`. Add `px-4` or `px-6` for mobile padding.
 - **Hero**: Full-width background, high contrast text, vertically centered content. The hero should feel bold and spacious — not cramped.
 - **Feature cards**: Use `shadow-sm` or subtle borders, rounded corners (`rounded-xl`), consistent card sizing. Grid layout: 1 column on mobile, 3 on desktop (`grid-cols-1 md:grid-cols-3`).
 - **CTA buttons**: Large (`px-8 py-4`), high contrast, rounded (`rounded-lg`), clear hover state (`hover:bg-opacity-90`). Use the primary brand color.
-- **Color**: Use the primary color from `docs/00_project/01_overview.md` for CTAs and accents only. Keep backgrounds neutral (`white`, `gray-50`, `gray-900`). Alternate section backgrounds for visual rhythm.
+- **Color**: Use the primary and accent colors from `docs/00_project/01_overview.md`. Add them as custom colors in `tailwind.config.js` (e.g. `primary: '#2563EB'`). For dark mode archetypes, use dark backgrounds (`gray-900`, `gray-950`) with light text. For light mode, keep backgrounds neutral (`white`, `gray-50`). Alternate section backgrounds for visual rhythm.
+- **Border radius and shadows**: Use the border radius and shadow style from the archetype. Apply consistently across all cards, buttons, and inputs.
 - **Mobile-first**: Always start with mobile layout, add responsive breakpoints with `md:` and `lg:` prefixes.
 - **Transitions**: Add subtle transitions on interactive elements (`transition-colors duration-200`).
 - **Icons**: Use `lucide-react` for all icons. Import only what you need (e.g. `import { Zap, Shield, Clock } from "lucide-react"`). Size icons with `size={24}` or Tailwind `w-6 h-6`.

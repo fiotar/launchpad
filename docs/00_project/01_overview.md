@@ -22,8 +22,16 @@ This is a real, deployable website — not a mockup.
 
 ## Design Direction
 
-**Primary Color**: [Pick one — e.g., #2563EB]
-**Tone**: [Professional / Playful / Minimal / Bold]
+### Archetype
+
+**Archetype**: [Corporate / Bold / Warm / Playful / Premium]
+**Heading Font**: [e.g. Inter, Space Grotesk, Libre Baskerville, DM Sans, Outfit]
+**Body Font**: [e.g. Inter, system default]
+**Mode**: [Light / Dark]
+**Primary Color**: [e.g. #2563EB]
+**Accent Color**: [e.g. #F59E0B — for highlights, badges, hover states]
+**Border Radius**: [sharp (rounded-md) / soft (rounded-xl) / pill (rounded-full)]
+**Shadow Style**: [subtle (shadow-sm) / strong (shadow-lg) / none]
 
 ### Inspiration
 

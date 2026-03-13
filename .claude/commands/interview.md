@@ -23,13 +23,34 @@ If they have an idea, proceed with the questions:
 3. **What problem are you solving?** (Who has this problem? Why does it matter?)
 4. **How do you solve it?** (What does your product actually do?)
 5. **Who is your target customer?** (Be specific — not "everyone")
-6. **Pick a primary brand color.** (Suggest a few hex codes based on their vibe, let them pick)
-7. **What's the tone?** (Professional / Playful / Minimal / Bold — or their own word)
-8. **Any website or brand you admire for design inspiration?** (Optional, fine to skip)
+6. **Pick a design archetype.** Present these options visually and let them choose:
+
+   | Archetype | Font | Mode | Feel | Think... |
+   |---|---|---|---|---|
+   | **Corporate** | Inter | Light | Clean, trustworthy, structured | Stripe, Linear |
+   | **Bold** | Space Grotesk | Dark | Techy, edgy, high-contrast | Vercel, Arc |
+   | **Warm** | Libre Baskerville | Light | Friendly, human, approachable | Calm, Headspace |
+   | **Playful** | DM Sans | Light | Fun, rounded, colorful | Notion, Figma |
+   | **Premium** | Outfit | Dark | Sleek, minimal, luxurious | Apple, Nothing |
+
+   They can also mix (e.g. "Warm but dark mode") — note the customization.
+
+7. **Pick a primary brand color.** Suggest 3-4 hex codes that pair well with their chosen archetype. For dark archetypes, suggest vibrant accent colors. For light ones, suggest deeper tones.
+8. **Design inspiration — pick one:**
+   - **"I have a site I love"** — they name a specific website or brand
+   - **"Find me something"** — you search for well-designed startups in their field
+   - **"Skip"** — move on
 
 ## Step 2b: Research design inspiration
 
-If the participant named a website or brand in question 8:
+If the participant chose **"Find me something"**:
+
+1. Use WebSearch to find 3-4 well-designed startups or products in their field (e.g. for a fintech startup, search "best fintech startup landing pages" or "top [industry] startup websites design")
+2. Present the options with a one-line description of each site's design style
+3. Use AskUserQuestion to let them pick their favorite (or combine elements from multiple)
+4. Then proceed with the research steps below using their chosen site
+
+If the participant named a specific website or brand:
 
 1. Use WebSearch to find their landing page and study it
 2. Use WebSearch to look for design reviews, UI breakdowns, or screenshots of that site
@@ -51,6 +72,11 @@ If they skipped question 8, move on.
 ## Step 3: Write the overview
 
 Write the completed `docs/00_project/01_overview.md` file using their answers, keeping the existing template structure. Fill in every `[placeholder]` field. Don't change the "What You're Building" or "Tech Stack" sections.
+
+For the **Design Direction > Archetype** section, fill in all fields based on their archetype choice:
+- Set the heading font, body font, mode, primary color, accent color, border radius, and shadow style
+- If they mixed archetypes (e.g. "Warm but dark mode"), adapt the defaults accordingly
+- Pick an accent color that complements their primary color
 
 ## Step 4: Generate a strategy brief
 
