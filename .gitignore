@@ -1,0 +1,16 @@
+node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+.env
+*.log
+test-results/
+playwright-report/
+.venv/
+*.egg-info/
+package-lock.json
+.claude/projects/
+.claude/statsig/
+.claude/todos/
+.claude/credentials.json
