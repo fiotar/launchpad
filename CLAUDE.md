@@ -43,6 +43,13 @@ REFACTOR: Clean up. Run tests again. All must still pass.
 - Use prefixes: `feat:`, `fix:`, `test:`, `refactor:`, `docs:`
 - Never commit failing tests (red state)
 
+#### Branching
+
+- Before starting a new spec phase, create a feature branch (e.g. `phase1/landing-page`, `phase2/waiting-list`)
+- Do all work for that phase on the feature branch
+- Once all tests pass for the phase, merge the branch into `main`
+- Keep `main` in a passing state at all times — never merge broken code
+
 ## Commands
 
 ```bash

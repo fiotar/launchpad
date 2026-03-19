@@ -6,13 +6,33 @@ Be encouraging and conversational. If an answer is vague, use AskUserQuestion ag
 
 Start by asking:
 
-**"Do you have a startup idea you'd like to build, or would you like me to surprise you?"**
+**"How would you like to get started? Pick one:"**
 
-If they choose **Surprise Me**:
+1. **"I have an idea"** — they already know what they want to build
+2. **"Surprise me"** — you'll ask about their interests and suggest ideas
+3. **"Research me"** — they give you their LinkedIn profile URL or email address, and you research them to propose a tailored idea
+
+If they choose **"I have an idea"**, proceed with the questions below.
+
+If they choose **"Surprise Me"**:
 - Ask them about their interests, background, or a problem they've personally experienced
 - Based on their answer, research trending problems in that space and propose 2-3 startup ideas with names and one-line pitches
 - Use AskUserQuestion to let them pick one (or remix elements from multiple)
 - Then continue with the remaining questions below, pre-filling what you already know
+
+If they choose **"Research Me"**:
+- Use AskUserQuestion to ask for their LinkedIn profile URL or email address
+- Use WebSearch to research their professional background:
+  - Search for their LinkedIn profile (using the URL directly, or searching "[email] LinkedIn" if they gave an email)
+  - Look for their role, industry, skills, recent posts, and professional interests
+  - Search for any talks, articles, or projects they've been involved in
+- Based on what you find, identify 2-3 problems in their domain that could be startup opportunities:
+  - Look for pain points common in their industry or role
+  - Consider their unique combination of skills and experience
+  - Search for trending problems or gaps in their space
+- Present 2-3 tailored startup ideas with names and one-line pitches, explaining *why* each one fits their background
+- Use AskUserQuestion to let them pick one (or remix elements from multiple)
+- Then continue with the remaining questions below, pre-filling what you already know from the research (they may already have a natural target customer, domain expertise, etc.)
 
 If they have an idea, proceed with the questions:
 
