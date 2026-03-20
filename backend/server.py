@@ -24,6 +24,7 @@ from backend.models import (
     LoginResponse,
 )
 from backend.analyser import analyse_site, get_all_areas
+from backend.geocoder import search_locations
 
 app = FastAPI()
 
@@ -167,6 +168,12 @@ async def logout(token: str = Depends(require_auth)):
 
 
 # ── ANALYSER ─────────────────────────────────────────────────────────────────
+@app.get("/api/location-search")
+async def location_search(q: str = ""):
+    """Public autocomplete endpoint — returns up to 5 US location suggestions."""
+    return await search_locations(q.strip())
+
+
 @app.get("/api/risk-map")
 async def risk_map():
     """Public endpoint — returns all areas with coordinates for the map."""

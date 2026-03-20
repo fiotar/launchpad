@@ -179,8 +179,10 @@ class TestAnalyseEndpoint:
         assert all(k in item for k in ("dimension", "label", "risk_level", "detail", "mitigation"))
         assert item["risk_level"] in ("HIGH", "MEDIUM")
 
-    async def test_safe_site_has_empty_reasoning(self, client, auth):
+    async def test_safe_site_has_low_risk_reasoning(self, client, auth):
         response = await client.post(
             "/api/analyse", json={"location": "New Albany, OH", "size": "small"}, headers=auth
         )
-        assert response.json()["reasoning"] == []
+        reasoning = response.json()["reasoning"]
+        assert len(reasoning) == 3
+        assert all(r["risk_level"] == "LOW" for r in reasoning)

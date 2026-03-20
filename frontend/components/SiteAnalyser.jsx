@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Zap, Droplets, Users, AlertTriangle, CheckCircle, AlertCircle, RotateCcw, Lock, Lightbulb } from "lucide-react";
 
@@ -73,12 +73,18 @@ const DIM_ICONS = {
 };
 
 const RISK_STYLE = {
-  HIGH:   { badge: "bg-red-100 text-red-700",    border: "border-red-100",    icon: "text-red-500" },
-  MEDIUM: { badge: "bg-amber-100 text-amber-700", border: "border-amber-100", icon: "text-amber-500" },
+  HIGH:   { badge: "bg-red-100 text-red-700",         border: "border-red-100",     icon: "text-red-500"     },
+  MEDIUM: { badge: "bg-amber-100 text-amber-700",      border: "border-amber-100",   icon: "text-amber-500"   },
+  LOW:    { badge: "bg-emerald-100 text-emerald-700",  border: "border-emerald-100", icon: "text-emerald-500" },
 };
 
 function ReasoningCard({ item, delay }) {
   const style = RISK_STYLE[item.risk_level] || RISK_STYLE.MEDIUM;
+  const tipLabel = item.risk_level === "LOW" ? "Best practice" : "Mitigation";
+  const tipStyle = item.risk_level === "LOW"
+    ? "bg-emerald-50 text-emerald-700"
+    : "bg-sky-50 text-sky-700";
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -97,9 +103,12 @@ function ReasoningCard({ item, delay }) {
       </div>
       <div className="px-4 py-3 flex flex-col gap-3">
         <p className="text-xs text-gray-600 leading-relaxed">{item.detail}</p>
-        <div className="flex items-start gap-2 bg-sky-50 rounded-lg px-3 py-2.5">
-          <Lightbulb size={13} className="text-sky-500 shrink-0 mt-0.5" />
-          <p className="text-xs text-sky-700 leading-relaxed">{item.mitigation}</p>
+        <div className={`flex items-start gap-2 rounded-lg px-3 py-2.5 ${item.risk_level === "LOW" ? "bg-emerald-50" : "bg-sky-50"}`}>
+          <Lightbulb size={13} className={`${item.risk_level === "LOW" ? "text-emerald-500" : "text-sky-500"} shrink-0 mt-0.5`} />
+          <div>
+            <span className={`text-xs font-semibold ${item.risk_level === "LOW" ? "text-emerald-700" : "text-sky-700"}`}>{tipLabel}: </span>
+            <span className={`text-xs ${item.risk_level === "LOW" ? "text-emerald-700" : "text-sky-700"} leading-relaxed`}>{item.mitigation}</span>
+          </div>
         </div>
       </div>
     </motion.div>
@@ -195,7 +204,7 @@ function ResultsCard({ result, onReset }) {
       {result.reasoning && result.reasoning.length > 0 && (
         <div className="border-x border-gray-100 bg-gray-50 px-6 py-5">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
-            Risk Analysis &amp; Mitigation
+            Site Intelligence
           </p>
           <div className="flex flex-col gap-3">
             {result.reasoning.map((item, i) => (
@@ -232,6 +241,41 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debounceRef = useRef(null);
+
+  const handleLocationChange = (e) => {
+    const val = e.target.value;
+    setLocation(val);
+    setResult(null);
+    setError("");
+    clearTimeout(debounceRef.current);
+    if (val.trim().length < 2) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/location-search?q=${encodeURIComponent(val.trim())}`);
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setSuggestions(data);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
+      } catch { /* silently ignore */ }
+    }, 350);
+  };
+
+  const selectSuggestion = (s) => {
+    setLocation(s.canonical);
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -335,14 +379,42 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
                 >
                   Location
                 </label>
-                <input
-                  id="analyser-location"
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="City, zip code, suburb or address…"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200"
-                />
+                <div className="relative">
+                  <input
+                    id="analyser-location"
+                    type="text"
+                    value={location}
+                    onChange={handleLocationChange}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                    placeholder="City, zip code, suburb or address…"
+                    autoComplete="off"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200"
+                  />
+                  <AnimatePresence>
+                    {showSuggestions && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -4 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-full left-0 right-0 z-30 mt-1 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden"
+                      >
+                        {suggestions.map((s, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onMouseDown={() => selectSuggestion(s)}
+                            className="w-full text-left px-4 py-3 hover:bg-sky-50 transition-colors border-b border-gray-50 last:border-0"
+                          >
+                            <div className="text-sm font-medium text-gray-800">{s.canonical}</div>
+                            <div className="text-xs text-gray-400 truncate mt-0.5">{s.display}</div>
+                          </button>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
 
               <div>

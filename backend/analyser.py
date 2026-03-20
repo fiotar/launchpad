@@ -360,6 +360,18 @@ def _get_alternatives(exclude_state: str, size: str) -> list[dict]:
 
 _REASON: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
     "water": {
+        "LOW": {
+            "Ohio":      ("Ohio sits within the Great Lakes Basin — the world's largest freshwater system. AEP's service territory has no water use restrictions for industrial cooling, and groundwater permits are routinely approved.",
+                          "Standard wet cooling tower design is appropriate. Implement a Water Usage Effectiveness (WUE) dashboard to support future ESG and sustainability reporting requirements."),
+            "Indiana":   ("Indiana has abundant freshwater from the Wabash and Ohio river systems with no state-level industrial cooling restrictions.",
+                          "Standard cooling infrastructure is appropriate. Consider smart water metering to support voluntary sustainability disclosures and future regulatory requirements."),
+            "Georgia":   ("Georgia's Chattahoochee River Basin provides reliable surface water supply. Georgia Power has no restrictions on industrial cooling for approved facilities.",
+                          "Standard wet cooling is appropriate. Monitor Suwannee River Water Management District guidance as voluntary water stewardship requirements are emerging in Atlanta-area markets."),
+            "Texas":     ("North Texas municipal water systems are well-provisioned for industrial users, though regional drought cycles can create short-term supply pressure during summer peaks.",
+                          "Standard cooling design is suitable. Develop a backup cooling contingency plan for extreme drought events and maintain a relationship with your local utility's industrial water team."),
+            "generic":   ("This region has sufficient water resources relative to current and projected industrial demand. No material regulatory constraints on new cooling water rights are anticipated at this time.",
+                          "Standard cooling infrastructure is appropriate for this site. Implement real-time water monitoring as part of your operational sustainability programme and to baseline WUE performance for future reporting."),
+        },
         "HIGH": {
             "Arizona":    ("The Phoenix metro faces severe water stress driven by Colorado River Tier 2 shortage declarations. Both Salt River Project and CAP allocations are constrained, limiting evaporative cooling for new large-load facilities.",
                            "Adopt closed-loop dry cooling or adiabatic towers, reducing water consumption by 80–90%. Engage the Arizona Water Bank Authority early to secure a water supply agreement and commission a site-specific Water Management Plan before permit applications."),
@@ -382,6 +394,18 @@ _REASON: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
         },
     },
     "energy": {
+        "LOW": {
+            "Ohio":    ("Ohio's AEP and FirstEnergy service territories offer some of the most reliable grid access in the US. PJM interconnection lead times in central Ohio run 12–18 months — well below the national average.",
+                        "File your interconnection application early to lock in current lead times. Consider a green tariff or renewable PPA through AEP Ohio to strengthen your ESG profile and meet customer sustainability requirements."),
+            "Indiana": ("Duke Energy Indiana and AEP Indiana operate underutilised grid capacity in key industrial corridors, with interconnection lead times under 18 months for most commercial-scale loads.",
+                        "Engage the local utility's large-customer team early. Available industrial tariffs in Indiana are among the most competitive in the Midwest — budget accordingly."),
+            "Georgia": ("Georgia Power's transmission network is well-provisioned for data centre loads. The state's GreenPower programme enables renewable energy procurement without grid access delays.",
+                        "Request a preliminary interconnection study from Georgia Power within 60 days of site selection. Enrol in the GreenPower programme to access 100% renewable energy from day one of operations."),
+            "Texas":   ("ERCOT's independent grid offers competitive wholesale power pricing and a relatively streamlined interconnection process compared to PJM or CAISO. Typical commercial lead times are 12–18 months.",
+                        "Engage Oncor or Luminant's large-customer teams early. Structure a fixed-price power purchase agreement to manage ERCOT's real-time price volatility, particularly for critical load segments."),
+            "generic": ("The regional grid offers reliable power supply with manageable interconnection timelines. No significant queue backlogs are anticipated for commercial-scale data centre loads in this area.",
+                        "File a preliminary interconnection enquiry within 30 days of site selection to lock in current lead times. Consider a renewable power purchase agreement to meet growing customer and regulatory ESG requirements."),
+        },
         "HIGH": {
             "Virginia":     ("Dominion Energy's PJM transmission zone has the largest commercial interconnection queue in the US — over 40 GW of pending load applications. New capacity agreements are taking 3+ years from application to energisation.",
                              "Engage a transmission attorney to file a pre-application consultation with Dominion immediately. Explore co-location next to an existing 230 kV or 500 kV substation to bypass the queue. Consider phased energisation (Phase 1 <50 MW) to access faster small-generator interconnection pathways."),
@@ -404,6 +428,18 @@ _REASON: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
         },
     },
     "community": {
+        "LOW": {
+            "Ohio":    ("Ohio's Data Centers Act provides a strong legislative framework welcoming data centre investment. Municipalities in the Columbus metro actively compete for large-scale facilities and have streamlined planning processes.",
+                        "Engage the local economic development office early to access site selection incentives. A proactive community briefing — before any formal application — is good practice and reinforces the region's positive reception."),
+            "Indiana": ("Indiana has consistently ranked as a top-5 state for data centre investment climate. Local planning commissions in established industrial corridors approve most applications without organised opposition.",
+                        "Maintain a community liaison programme throughout construction. A local hire commitment — even at 20–30% of construction workforce — generates goodwill and can accelerate planning approvals."),
+            "Georgia": ("Georgia's data centre sector is well-established and politically supported. Planning commissions in the Atlanta metro's industrial corridors have extensive experience approving large-format data centre applications.",
+                        "Engage the county economic development authority to understand available incentives and pre-approved industrial zones. A community benefits package focused on local employment is welcome but not typically required."),
+            "Texas":   ("Texas's business-friendly regulatory environment and established Las Colinas and Allen data centre markets mean community opposition is rare in established industrial corridors.",
+                        "Maintain standard community communications throughout the planning and construction process. Local hire commitments are appreciated and often accelerate informal planning support."),
+            "generic": ("This location has a supportive regulatory environment for large industrial development. No significant community opposition campaigns are anticipated, and planning processes are typically straightforward.",
+                        "Maintain proactive community communications throughout the planning and construction phases. Even in low-opposition markets, regular updates to local officials and neighbours prevents issues from emerging later."),
+        },
         "HIGH": {
             "Virginia":      ("Loudoun and Prince William counties face active data centre moratorium pressure. Opposition centres on noise, traffic, visual impact, and the perception of 'zombie campuses' that consume power and water without creating meaningful local employment.",
                               "Commission an independent economic impact study projecting 200+ permanent jobs and $50M+ in annual tax revenue. Engage a dedicated community relations firm 12 months before planning application. Offer a binding Community Benefits Agreement (CBA) guaranteeing local hiring, school funding contributions, and independent noise monitoring."),
@@ -429,7 +465,7 @@ _DIM_LABELS = {"water": "Water & Cooling", "energy": "Energy Grid", "community":
 
 
 def _get_reasoning(state: str, scores: dict[str, int]) -> list[dict]:
-    """Generate dimension-level reasoning and mitigation advice for elevated risk scores."""
+    """Generate dimension-level reasoning and context for all three risk dimensions."""
     result = []
     for dim in ("water", "energy", "community"):
         score = scores[dim]
@@ -438,16 +474,16 @@ def _get_reasoning(state: str, scores: dict[str, int]) -> list[dict]:
         elif score >= 40:
             level = "MEDIUM"
         else:
-            continue  # LOW risk — no reasoning needed
+            level = "LOW"
 
         level_data = _REASON.get(dim, {}).get(level, {})
         detail, mitigation = level_data.get(state) or level_data.get("generic", ("", ""))
 
         result.append({
-            "dimension": dim,
-            "label":     _DIM_LABELS[dim],
+            "dimension":  dim,
+            "label":      _DIM_LABELS[dim],
             "risk_level": level,
-            "detail":    detail,
+            "detail":     detail,
             "mitigation": mitigation,
         })
     return result
@@ -480,7 +516,7 @@ async def analyse_site(location: str, size: str) -> dict:
     verdict      = _get_verdict(scores)
     flags        = _get_flags(state, scores)
     alternatives = _get_alternatives(exclude_state=state, size=size) if verdict != "SAFE TO BUILD" else []
-    reasoning    = _get_reasoning(state, scores) if verdict != "SAFE TO BUILD" else []
+    reasoning    = _get_reasoning(state, scores)
 
     return {
         "location":     geo["canonical"],

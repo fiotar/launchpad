@@ -26,6 +26,52 @@ STATE_ABBR: dict[str, str] = {
 }
 
 
+async def search_locations(query: str, limit: int = 5) -> list[dict]:
+    """
+    Return autocomplete suggestions for a partial US location string.
+    Used by the /api/location-search endpoint. Fails silently on network errors.
+    """
+    if not query or len(query.strip()) < 2:
+        return []
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.get(
+                _URL,
+                params={
+                    "q": query,
+                    "format": "json",
+                    "countrycodes": "us",
+                    "limit": limit,
+                    "addressdetails": 1,
+                },
+                headers=_HEADERS,
+                timeout=5.0,
+            )
+        except (httpx.TimeoutException, httpx.RequestError):
+            return []
+    if resp.status_code != 200:
+        return []
+
+    results = []
+    seen = set()
+    for hit in resp.json():
+        addr = hit.get("address", {})
+        state = addr.get("state", "")
+        city = (
+            addr.get("city") or addr.get("town") or addr.get("village")
+            or addr.get("suburb") or addr.get("hamlet")
+            or addr.get("county", "").replace(" County", "").replace(" Parish", "")
+        )
+        state_abbr = STATE_ABBR.get(state, state[:2].upper() if len(state) >= 2 else "")
+        canonical = f"{city}, {state_abbr}" if city and state_abbr else hit["display_name"].split(",")[0]
+        # Deduplicate identical canonical names
+        if canonical in seen:
+            continue
+        seen.add(canonical)
+        results.append({"canonical": canonical, "display": hit["display_name"]})
+    return results
+
+
 async def geocode_us(location: str) -> dict:
     """
     Convert any US location string (city, zip code, suburb, address, landmark)
