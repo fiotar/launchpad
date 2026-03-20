@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Player } from "@remotion/player";
 import {
@@ -10,13 +10,15 @@ import {
   ArrowRight,
   Menu,
   X,
+  MapPin,
+  CheckCircle,
 } from "lucide-react";
 import { HeroComposition } from "./components/HeroComposition";
 import { HowItWorksComposition } from "./components/HowItWorksComposition";
 import WaitlistSection from "./components/WaitlistSection";
 import SiteAnalyser from "./components/SiteAnalyser";
 import LoginModal from "./components/LoginModal";
-import USRiskMap from "./components/USRiskMap";
+
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -32,6 +34,101 @@ const NAV_LINKS = [
 const scrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
+
+const HOW_IT_WORKS_STEPS = [
+  {
+    number: 1,
+    icon: <MapPin size={32} />,
+    title: "Input your candidate sites",
+    description:
+      "Enter any US location — a city, zip code, suburb, or address. Terrascope accepts anything from a single site to a portfolio of 100+ locations, and resolves each one to precise coordinates automatically.",
+  },
+  {
+    number: 2,
+    icon: <Zap size={32} />,
+    title: "We analyse every risk dimension",
+    description:
+      "Our models cross-reference real water stress data, grid interconnection queues, and community sentiment signals — simultaneously, for every site. No manual research. No waiting.",
+  },
+  {
+    number: 3,
+    icon: <CheckCircle size={32} />,
+    title: "Get ranked, actionable recommendations",
+    description:
+      "Receive a risk-ranked result with scores, red flags, reasoning, and alternative sites for each dimension. Share with your team and move to the next phase with confidence.",
+  },
+];
+
+function HowItWorksCarousel() {
+  const [active, setActive] = useState(0);
+  const prev = () => setActive((i) => (i + 2) % 3);
+  const next = () => setActive((i) => (i + 1) % 3);
+  const step = HOW_IT_WORKS_STEPS[active];
+
+  return (
+    <div className="flex items-center gap-4 md:gap-8">
+      {/* Prev button */}
+      <button
+        onClick={prev}
+        aria-label="Previous step"
+        className="shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-105"
+        style={{ borderColor: PRIMARY, color: PRIMARY, backgroundColor: "white" }}
+      >
+        <ChevronDown size={20} className="rotate-90" />
+      </button>
+
+      {/* Slide */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active}
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -40 }}
+          transition={{ duration: 0.3 }}
+          className="flex-1 rounded-2xl px-10 py-12 text-center"
+          style={{ background: `linear-gradient(145deg, #0A1628 0%, #0F2040 100%)` }}
+        >
+          {/* Icon */}
+          <div className="flex justify-center mb-5" style={{ color: ACCENT }}>
+            {step.icon}
+          </div>
+
+          {/* Text */}
+          <h3 className="text-xl font-bold mb-4 text-white">{step.title}</h3>
+          <p className="text-sm leading-relaxed max-w-md mx-auto" style={{ color: "#94A3B8" }}>
+            {step.description}
+          </p>
+
+          {/* Dot indicators */}
+          <div className="flex justify-center gap-2 mt-8">
+            {HOW_IT_WORKS_STEPS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActive(i)}
+                className="transition-all duration-300 rounded-full"
+                style={{
+                  width: i === active ? 24 : 8,
+                  height: 8,
+                  backgroundColor: i === active ? ACCENT : "rgba(255,255,255,0.2)",
+                }}
+              />
+            ))}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Next button */}
+      <button
+        onClick={next}
+        aria-label="Next step"
+        className="shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-105"
+        style={{ borderColor: PRIMARY, color: PRIMARY, backgroundColor: "white" }}
+      >
+        <ChevronDown size={20} className="-rotate-90" />
+      </button>
+    </div>
+  );
+}
 
 export default function App() {
   const [mounted, setMounted] = useState(false);
@@ -78,9 +175,13 @@ export default function App() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold tracking-tight" style={{ color: scrolled ? PRIMARY : "#fff" }}>
-            Terrascope
-          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="44" height="44">
+            <ellipse cx="50" cy="58" rx="42" ry="18" fill="none" stroke={scrolled ? "#1E3A5F" : "#fff"} strokeWidth="2.5"/>
+            <ellipse cx="50" cy="50" rx="30" ry="13" fill="none" stroke={scrolled ? "#1E3A5F" : "#fff"} strokeWidth="2.5"/>
+            <ellipse cx="50" cy="43" rx="19" ry="8" fill="none" stroke={scrolled ? "#1E3A5F" : "#fff"} strokeWidth="2.5"/>
+            <ellipse cx="50" cy="37" rx="10" ry="4.5" fill="none" stroke="#38BDF8" strokeWidth="2.5"/>
+            <ellipse cx="50" cy="32" rx="4" ry="2" fill="#38BDF8"/>
+          </svg>
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
@@ -174,7 +275,9 @@ export default function App() {
         <section
           className="min-h-screen flex items-center pt-16"
           style={{
-            background: `linear-gradient(135deg, ${PRIMARY} 0%, #0F2040 50%, #1A3554 100%)`,
+            backgroundImage: `linear-gradient(135deg, rgba(30,58,95,0.93) 0%, rgba(15,32,64,0.93) 50%, rgba(26,53,84,0.96) 100%), url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1920&q=80')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
           }}
         >
           <div className="max-w-6xl mx-auto px-6 py-24 w-full">
@@ -301,7 +404,7 @@ export default function App() {
                   icon: <Users size={28} />,
                   title: "Community & Political Risk",
                   description:
-                    "Local opposition sentiment, planning ordinance exposure, and moratorium risk signals — before you engage planners. Avoid the communities that will fight you.",
+                    "Understand community needs before you build. Terrascope surfaces local sentiment, planning dynamics, and engagement opportunities — so developers can design projects that create shared value and build lasting trust with the communities that host them.",
                   delay: 0.2,
                 },
               ].map(({ icon, title, description, delay }) => (
@@ -347,28 +450,12 @@ export default function App() {
             </motion.div>
 
             <div className="max-w-3xl mx-auto">
-              {mounted && (
-                <Player
-                  component={HowItWorksComposition}
-                  durationInFrames={300}
-                  compositionWidth={720}
-                  compositionHeight={420}
-                  fps={30}
-                  autoPlay
-                  loop
-                  controls={false}
-                  acknowledgeRemotionLicense
-                  style={{ width: "100%", borderRadius: 16 }}
-                />
-              )}
+              <HowItWorksCarousel />
             </div>
           </div>
         </section>
 
-        {/* ── US RISK MAP ── */}
-        <USRiskMap token={token} onLoginRequest={() => setShowLogin(true)} />
-
-        {/* ── SITE ANALYSER ── */}
+        {/* ── SITE ANALYSER + MAP ── */}
         <SiteAnalyser token={token} onLoginRequest={() => setShowLogin(true)} />
 
         {/* ── TESTIMONIALS ── */}
@@ -390,7 +477,7 @@ export default function App() {
               {[
                 {
                   quote:
-                    "We lost 14 months on a Frankfurt site because of a grid interconnection queue we didn't know existed. Terrascope would have flagged it on day one.",
+                    "We lost 14 months on a Northern Virginia site because of a grid interconnection queue we didn't know existed. Terrascope would have flagged it on day one.",
                   name: "Marcus Teller",
                   role: "VP Development, EdgeCore Partners",
                 },
@@ -449,12 +536,6 @@ export default function App() {
                   We've seen what bad site selection costs
                 </h2>
                 <p className="text-gray-500 leading-relaxed mb-4">
-                  Terrascope was founded by a team of infrastructure developers and
-                  data scientists who spent years watching projects fail — not because
-                  of bad engineering, but because critical site risks were discovered
-                  too late.
-                </p>
-                <p className="text-gray-500 leading-relaxed mb-4">
                   A $400M campus stalled for three years over a grid interconnection
                   queue nobody modelled. A 200-acre site abandoned after a community
                   opposition campaign that took 18 months to organise. Water rights
@@ -467,7 +548,7 @@ export default function App() {
                   filings, and planning archives. We bring it together, score it, and
                   surface it in seconds.
                 </p>
-                <div className="flex flex-wrap gap-6">
+                <div className="flex flex-wrap gap-6 mb-10">
                   {[
                     { value: "$64B+", label: "in failed site investments we've studied" },
                     { value: "15+", label: "markets covered across the US" },
@@ -476,6 +557,35 @@ export default function App() {
                     <div key={value}>
                       <div className="text-2xl font-bold" style={{ color: PRIMARY }}>{value}</div>
                       <div className="text-xs text-gray-400 mt-0.5 max-w-[120px]">{label}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Our Values */}
+                <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-4">
+                  Our Values
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    {
+                      title: "Responsible placement",
+                      body: "We believe data centres should be built where communities, resources, and infrastructure can genuinely support them.",
+                    },
+                    {
+                      title: "Trust through transparency",
+                      body: "We show our working. Every risk score comes with the reasoning behind it.",
+                    },
+                    {
+                      title: "Rigour in everything",
+                      body: "Our intelligence is only as valuable as its accuracy. We hold ourselves to the highest standard of evidence.",
+                    },
+                  ].map(({ title, body }) => (
+                    <div
+                      key={title}
+                      className="rounded-xl border border-gray-100 bg-gray-50 px-5 py-4"
+                    >
+                      <p className="text-sm font-semibold mb-1" style={{ color: PRIMARY }}>{title}</p>
+                      <p className="text-sm text-gray-500 leading-relaxed">{body}</p>
                     </div>
                   ))}
                 </div>
@@ -491,48 +601,48 @@ export default function App() {
               >
                 {[
                   {
-                    name: "Mia Hollander",
-                    role: "CEO & Co-founder",
-                    bio: "Former VP of Site Development at EdgeCore. Led 12 hyperscale campus acquisitions across North America and Europe.",
-                    initials: "MH",
+                    name: "Fiola Tariang",
+                    role: "Co-founder",
+                    initials: "FT",
                   },
                   {
-                    name: "Dev Krishnamurthy",
-                    role: "CTO & Co-founder",
-                    bio: "Previously led grid infrastructure data at FERC. Built real-time transmission analytics tools used by three US ISOs.",
-                    initials: "DK",
+                    name: "Aishani Grover",
+                    role: "Co-founder",
+                    initials: "AG",
                   },
                   {
-                    name: "Lena Bachmann",
-                    role: "Head of Data Science",
-                    bio: "Hydrologist turned data scientist. Published WRI-cited research on industrial water stress modelling across arid US markets.",
-                    initials: "LB",
+                    name: "Sherwin Stanley Isaac",
+                    role: "Co-founder",
+                    initials: "SS",
                   },
                   {
-                    name: "James Okafor",
-                    role: "Head of Policy & Community",
-                    bio: "Former planning commissioner in Loudoun County, VA. Advisor on 20+ data centre community engagement processes.",
-                    initials: "JO",
+                    name: "Edgar Khieu",
+                    role: "Co-founder",
+                    initials: "EK",
                   },
-                ].map(({ name, role, bio, initials }, i) => (
+                  {
+                    name: "Tayyab Rana",
+                    role: "Co-founder",
+                    initials: "TR",
+                  },
+                ].map(({ name, role, initials }, i) => (
                   <motion.div
                     key={name}
                     initial={{ opacity: 0, y: 10 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.4, delay: i * 0.08 }}
-                    className="flex items-start gap-4 p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200"
                   >
                     <div
-                      className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
                       style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #2563EB 100%)` }}
                     >
                       {initials}
                     </div>
                     <div>
                       <p className="font-semibold text-sm" style={{ color: PRIMARY }}>{name}</p>
-                      <p className="text-xs font-medium mb-1.5" style={{ color: ACCENT }}>{role}</p>
-                      <p className="text-xs text-gray-500 leading-relaxed">{bio}</p>
+                      <p className="text-xs font-medium" style={{ color: ACCENT }}>{role}</p>
                     </div>
                   </motion.div>
                 ))}
@@ -544,7 +654,11 @@ export default function App() {
         {/* ── FINAL CTA ── */}
         <section
           className="py-24"
-          style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #0F2040 100%)` }}
+          style={{
+            backgroundImage: `linear-gradient(135deg, rgba(30,58,95,0.92) 0%, rgba(15,32,64,0.95) 100%), url('https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1920&q=80')`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
         >
           <div className="max-w-3xl mx-auto px-6 text-center">
             <motion.div
@@ -588,7 +702,16 @@ export default function App() {
       <footer className="py-12 border-t border-gray-100" style={{ backgroundColor: "#FAFAFA" }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <span className="text-lg font-bold" style={{ color: PRIMARY }}>Terrascope</span>
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="28" height="28">
+                <ellipse cx="50" cy="58" rx="42" ry="18" fill="none" stroke="#1E3A5F" strokeWidth="2.5"/>
+                <ellipse cx="50" cy="50" rx="30" ry="13" fill="none" stroke="#1E3A5F" strokeWidth="2.5"/>
+                <ellipse cx="50" cy="43" rx="19" ry="8" fill="none" stroke="#1E3A5F" strokeWidth="2.5"/>
+                <ellipse cx="50" cy="37" rx="10" ry="4.5" fill="none" stroke="#38BDF8" strokeWidth="2.5"/>
+                <ellipse cx="50" cy="32" rx="4" ry="2" fill="#38BDF8"/>
+              </svg>
+              <span className="text-lg font-bold" style={{ color: PRIMARY }}>Terrascope</span>
+            </div>
             <nav className="flex items-center gap-6 flex-wrap justify-center">
               {NAV_LINKS.map(({ id, label }) => (
                 <button

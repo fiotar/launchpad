@@ -3,9 +3,9 @@ import { useCurrentFrame, interpolate, AbsoluteFill, Sequence } from "remotion";
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
 
-// Each step gets 100 frames: 80 visible + 20 transition
-// Total: 300 frames
-const STEP_DURATION = 100;
+// Each step gets 255 frames @ 30fps = 8.5 seconds visible + 20 frame transition
+// Total: 765 frames
+const STEP_DURATION = 255;
 const FADE_DURATION = 20;
 
 function Step({ number, icon, title, description, frame, inFrame, outFrame }) {

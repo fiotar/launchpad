@@ -521,6 +521,8 @@ async def analyse_site(location: str, size: str) -> dict:
     return {
         "location":     geo["canonical"],
         "size":         size,
+        "lat":          geo["lat"],
+        "lng":          geo["lng"],
         "scores":       scores,
         "verdict":      verdict,
         "flags":        flags,

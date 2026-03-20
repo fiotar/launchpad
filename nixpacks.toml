@@ -1,7 +1,7 @@
 [phases.install]
 cmds = [
   "npm install",
-  "pip install fastapi uvicorn 'pydantic[email]' python-dotenv email-validator httpx"
+  "pip install fastapi uvicorn 'pydantic[email]' python-dotenv email-validator httpx anthropic"
 ]
 
 [phases.build]

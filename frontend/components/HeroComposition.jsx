@@ -122,10 +122,10 @@ export function HeroComposition() {
             SITE RISK ANALYSIS
           </div>
           <div style={{ color: "#F1F5F9", fontSize: 20, fontWeight: 700 }}>
-            Frankfurt West — Plot 14B
+            Ashburn, VA — Campus Site C
           </div>
           <div style={{ color: "#64748B", fontSize: 12, marginTop: 4 }}>
-            50.1109° N, 8.6821° E · 12.4 ha · Industrial zone
+            39.0438° N, 77.4874° W · 12.4 ha · Industrial zone
           </div>
         </div>
 

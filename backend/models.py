@@ -61,6 +61,26 @@ class AlternativeSite(BaseModel):
     reason: str
 
 
+class ActionRequest(BaseModel):
+    location: str
+    dimension: str   # "water" | "energy" | "community"
+    size: str
+    score: int
+    mitigation: str
+
+
+class ActionSection(BaseModel):
+    heading: str
+    content: str
+
+
+class ActionResponse(BaseModel):
+    title: str
+    document_type: str
+    location: str
+    sections: list[ActionSection]
+
+
 class RiskReasoning(BaseModel):
     dimension: str   # "water" | "energy" | "community"
     label: str       # human-readable label
@@ -72,6 +92,8 @@ class RiskReasoning(BaseModel):
 class AnalyseResponse(BaseModel):
     location: str
     size: str
+    lat: float
+    lng: float
     scores: SiteScore
     verdict: str
     flags: list[str]

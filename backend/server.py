@@ -20,11 +20,14 @@ from backend.models import (
     WaitlistCount,
     AnalyseRequest,
     AnalyseResponse,
+    ActionRequest,
+    ActionResponse,
     LoginRequest,
     LoginResponse,
 )
 from backend.analyser import analyse_site, get_all_areas
 from backend.geocoder import search_locations
+from backend.actions import generate_action_document
 
 app = FastAPI()
 
@@ -178,6 +181,24 @@ async def location_search(q: str = ""):
 async def risk_map():
     """Public endpoint — returns all areas with coordinates for the map."""
     return get_all_areas()
+
+
+@app.post("/api/action", response_model=ActionResponse)
+async def action(body: ActionRequest, token: str = Depends(require_auth)):
+    """Generate a professional action document for a given risk dimension."""
+    doc = await generate_action_document(
+        location=body.location,
+        dimension=body.dimension,
+        size=body.size,
+        score=body.score,
+        mitigation=body.mitigation,
+    )
+    return ActionResponse(
+        title=doc["title"],
+        document_type=doc.get("document_type", "Action Document"),
+        location=body.location,
+        sections=doc.get("sections", []),
+    )
 
 
 @app.post("/api/analyse", response_model=AnalyseResponse)
