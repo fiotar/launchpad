@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Zap, Droplets, Users, AlertTriangle, CheckCircle, AlertCircle, RotateCcw } from "lucide-react";
+import { MapPin, Zap, Droplets, Users, AlertTriangle, CheckCircle, AlertCircle, RotateCcw, Lock } from "lucide-react";
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -172,7 +172,7 @@ function ResultsCard({ result, onReset }) {
   );
 }
 
-export default function SiteAnalyser() {
+export default function SiteAnalyser({ token, onLoginRequest }) {
   const [location, setLocation] = useState("");
   const [size, setSize] = useState("small");
   const [loading, setLoading] = useState(false);
@@ -182,6 +182,7 @@ export default function SiteAnalyser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!location.trim()) return;
+    if (!token) { onLoginRequest?.(); return; }
     setLoading(true);
     setError("");
     setResult(null);
@@ -189,7 +190,10 @@ export default function SiteAnalyser() {
     try {
       const res = await fetch("/api/analyse", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
         body: JSON.stringify({ location: location.trim(), size }),
       });
       const data = await res.json();
@@ -208,7 +212,40 @@ export default function SiteAnalyser() {
   };
 
   return (
-    <section id="analyser" className="py-24 bg-white">
+    <section id="analyser" className="py-24 bg-white relative">
+      {/* Auth overlay */}
+      {!token && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center"
+          style={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(6px)" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-center px-8 py-10 rounded-2xl border border-gray-200 bg-white shadow-xl max-w-sm mx-4"
+          >
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
+              style={{ backgroundColor: "rgba(30,58,95,0.08)" }}
+            >
+              <Lock size={24} style={{ color: PRIMARY }} />
+            </div>
+            <h3 className="text-xl font-bold mb-2" style={{ color: PRIMARY }}>
+              Sign in to access
+            </h3>
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+              The Site Analyser is available to Terrascope subscribers.
+              Sign in to run unlimited analyses.
+            </p>
+            <button
+              onClick={onLoginRequest}
+              className="px-8 py-3 rounded-lg font-semibold text-white text-sm transition-all duration-200 hover:opacity-90"
+              style={{ backgroundColor: PRIMARY }}
+            >
+              Sign In to Analyse
+            </button>
+          </motion.div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

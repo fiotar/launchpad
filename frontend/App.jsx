@@ -15,6 +15,8 @@ import { HeroComposition } from "./components/HeroComposition";
 import { HowItWorksComposition } from "./components/HowItWorksComposition";
 import WaitlistSection from "./components/WaitlistSection";
 import SiteAnalyser from "./components/SiteAnalyser";
+import LoginModal from "./components/LoginModal";
+import USRiskMap from "./components/USRiskMap";
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -34,6 +36,8 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [token, setToken] = useState(() => localStorage.getItem("terrascope_token") || "");
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -41,6 +45,21 @@ export default function App() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLoginSuccess = (newToken) => {
+    setToken(newToken);
+    setShowLogin(false);
+    setTimeout(() => scrollTo("analyser"), 300);
+  };
+
+  const handleLogout = () => {
+    fetch("/api/auth/logout", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    }).catch(() => {});
+    localStorage.removeItem("terrascope_token");
+    setToken("");
+  };
 
   const handleNav = (id) => {
     scrollTo(id);
@@ -78,13 +97,23 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => scrollTo("analyser")}
-              className="hidden md:block px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
-              style={{ backgroundColor: ACCENT, color: PRIMARY }}
-            >
-              Try the Analyser
-            </button>
+            {token ? (
+              <button
+                onClick={handleLogout}
+                className="hidden md:block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border"
+                style={{ borderColor: scrolled ? "#CBD5E1" : "rgba(255,255,255,0.3)", color: scrolled ? "#64748B" : "rgba(255,255,255,0.7)" }}
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowLogin(true)}
+                className="hidden md:block px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
+                style={{ backgroundColor: ACCENT, color: PRIMARY }}
+              >
+                Sign In
+              </button>
+            )}
 
             {/* Mobile hamburger */}
             <button
@@ -117,13 +146,22 @@ export default function App() {
                     {label}
                   </button>
                 ))}
-                <button
-                  onClick={() => handleNav("analyser")}
-                  className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center"
-                  style={{ backgroundColor: ACCENT, color: PRIMARY }}
-                >
-                  Try the Analyser
-                </button>
+                {token ? (
+                  <button
+                    onClick={() => { handleLogout(); setMobileOpen(false); }}
+                    className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center border border-gray-200 text-gray-600"
+                  >
+                    Sign Out
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { setShowLogin(true); setMobileOpen(false); }}
+                    className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center"
+                    style={{ backgroundColor: ACCENT, color: PRIMARY }}
+                  >
+                    Sign In
+                  </button>
+                )}
               </div>
             </motion.div>
           )}
@@ -326,8 +364,11 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── US RISK MAP ── */}
+        <USRiskMap />
+
         {/* ── SITE ANALYSER ── */}
-        <SiteAnalyser />
+        <SiteAnalyser token={token} onLoginRequest={() => setShowLogin(true)} />
 
         {/* ── TESTIMONIALS ── */}
         <section className="py-24 bg-gray-50">
@@ -419,6 +460,14 @@ export default function App() {
         {/* ── WAITING LIST ── */}
         <WaitlistSection />
       </main>
+
+      {/* ── LOGIN MODAL ── */}
+      {showLogin && (
+        <LoginModal
+          onClose={() => setShowLogin(false)}
+          onSuccess={handleLoginSuccess}
+        />
+      )}
 
       {/* ── FOOTER ── */}
       <footer className="py-12 border-t border-gray-100" style={{ backgroundColor: "#FAFAFA" }}>

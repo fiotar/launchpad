@@ -3,6 +3,10 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import App from "../../frontend/App";
 
 beforeEach(() => {
+  // Provide a fake token so the analyser section is unlocked
+  localStorage.setItem("terrascope_token", "fake-test-token");
+
+  // Default mock: waitlist count + risk-map both resolve OK
   global.fetch = vi.fn().mockResolvedValue({
     ok: true,
     json: async () => ({ count: 0 }),
@@ -34,7 +38,8 @@ describe("Phase 3: Site Analyser", () => {
   });
 
   it("shows results after successful analysis", async () => {
-    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) });
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) }); // waitlist count
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([]) }); // risk-map
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -66,7 +71,8 @@ describe("Phase 3: Site Analyser", () => {
   });
 
   it("shows alternatives when site is high risk", async () => {
-    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) });
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) }); // waitlist count
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([]) }); // risk-map
     global.fetch.mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -98,7 +104,8 @@ describe("Phase 3: Site Analyser", () => {
   });
 
   it("shows not found message for unknown location", async () => {
-    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) });
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ({ count: 0 }) }); // waitlist count
+    global.fetch.mockResolvedValueOnce({ ok: true, json: async () => ([]) }); // risk-map
     global.fetch.mockResolvedValueOnce({
       ok: false,
       status: 404,
