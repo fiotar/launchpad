@@ -6,15 +6,13 @@ import {
   Zap,
   Users,
   MapPin,
-  BarChart3,
-  Shield,
   ChevronDown,
   Quote,
   ArrowRight,
-  CheckCircle,
 } from "lucide-react";
 import { HeroComposition } from "./components/HeroComposition";
 import { HowItWorksComposition } from "./components/HowItWorksComposition";
+import WaitlistSection from "./components/WaitlistSection";
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -69,7 +67,7 @@ export default function App() {
             onMouseEnter={(e) => (e.target.style.backgroundColor = "#152C47")}
             onMouseLeave={(e) => (e.target.style.backgroundColor = PRIMARY)}
           >
-            Join Waitlist
+            Get Early Access
           </button>
         </div>
       </header>
@@ -366,40 +364,7 @@ export default function App() {
         </section>
 
         {/* ── WAITING LIST ── */}
-        <section id="waitlist" className="py-24 bg-white">
-          <div className="max-w-xl mx-auto px-6 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-            >
-              <MapPin size={40} className="mx-auto mb-6" style={{ color: ACCENT }} />
-              <h2 className="text-3xl font-bold mb-4" style={{ color: PRIMARY }}>
-                Join the Waitlist
-              </h2>
-              <p className="text-gray-500 mb-8">
-                Be first to access Terrascope when we launch. No spam —
-                just a heads-up when your account is ready.
-              </p>
-              <form className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="email"
-                  placeholder="your@email.com"
-                  className="flex-1 px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 text-sm"
-                  style={{ focusRingColor: ACCENT }}
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 rounded-lg font-semibold text-white text-sm transition-all duration-200 hover:opacity-90"
-                  style={{ backgroundColor: PRIMARY }}
-                >
-                  Join Waitlist
-                </button>
-              </form>
-            </motion.div>
-          </div>
-        </section>
+        <WaitlistSection />
       </main>
 
       {/* ── FOOTER ── */}
