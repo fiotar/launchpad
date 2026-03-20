@@ -13,6 +13,7 @@ import {
 import { HeroComposition } from "./components/HeroComposition";
 import { HowItWorksComposition } from "./components/HowItWorksComposition";
 import WaitlistSection from "./components/WaitlistSection";
+import SiteAnalyser from "./components/SiteAnalyser";
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -50,7 +51,7 @@ export default function App() {
             Terrascope
           </span>
           <nav className="hidden md:flex items-center gap-8">
-            {["features", "how-it-works", "waitlist"].map((id) => (
+            {["features", "how-it-works", "analyser", "waitlist"].map((id) => (
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
@@ -363,6 +364,9 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── SITE ANALYSER ── */}
+        <SiteAnalyser />
+
         {/* ── WAITING LIST ── */}
         <WaitlistSection />
       </main>
@@ -378,7 +382,7 @@ export default function App() {
               Terrascope
             </span>
             <nav className="flex items-center gap-6">
-              {["features", "how-it-works", "waitlist"].map((id) => (
+              {["features", "how-it-works", "analyser", "waitlist"].map((id) => (
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}

@@ -17,7 +17,10 @@ from backend.models import (
     WaitlistRequest,
     WaitlistResponse,
     WaitlistCount,
+    AnalyseRequest,
+    AnalyseResponse,
 )
+from backend.analyser import analyse_site
 
 app = FastAPI()
 
@@ -130,6 +133,19 @@ async def export_waitlist(x_api_key: str = Header(default=None)):
             "SELECT name, email, interest, signed_up_at FROM signups ORDER BY id"
         ).fetchall()
     return [dict(row) for row in rows]
+
+
+# ── ANALYSER ─────────────────────────────────────────────────────────────────
+@app.post("/api/analyse", response_model=AnalyseResponse)
+async def analyse(body: AnalyseRequest):
+    try:
+        result = analyse_site(body.location, body.size.value)
+    except KeyError:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Location '{body.location}' not found. Try a US city like 'Phoenix, AZ' or 'Des Moines, IA'.",
+        )
+    return result
 
 
 # ── SPA FALLBACK ─────────────────────────────────────────────────────────────
