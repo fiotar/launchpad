@@ -5,9 +5,9 @@
   "description": "ESMT Berlin Ideation Bootcamp — AI-Native Startup Builder",
   "scripts": {
     "setup": "node setup.js",
-    "dev": "concurrently \"vite\" \".venv/bin/python -m uvicorn backend.server:app --reload --port 3004\"",
+    "dev": "concurrently \"vite\" \".venv/bin/python -m uvicorn backend.server:app --reload --reload-dir backend --port 3004\"",
     "dev:frontend": "vite",
-    "dev:backend": ".venv/bin/python -m uvicorn backend.server:app --reload --port 3004",
+    "dev:backend": ".venv/bin/python -m uvicorn backend.server:app --reload --reload-dir backend --port 3004",
     "build": "vite build",
     "test": ".venv/bin/python -m pytest && npx vitest run",
     "test:py": ".venv/bin/python -m pytest",
