@@ -2,7 +2,15 @@
 export default {
   content: ["./index.html", "./frontend/**/*.{js,jsx}"],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+      },
+      colors: {
+        primary: "#1E3A5F",
+        accent: "#38BDF8",
+      },
+    },
   },
   plugins: [],
 };
