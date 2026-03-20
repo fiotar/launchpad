@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Player } from "@remotion/player";
 import {
   Droplets,
   Zap,
   Users,
-  MapPin,
   ChevronDown,
   Quote,
   ArrowRight,
+  Menu,
+  X,
 } from "lucide-react";
 import { HeroComposition } from "./components/HeroComposition";
 import { HowItWorksComposition } from "./components/HowItWorksComposition";
@@ -18,6 +19,13 @@ import SiteAnalyser from "./components/SiteAnalyser";
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
 
+const NAV_LINKS = [
+  { id: "features", label: "Features" },
+  { id: "how-it-works", label: "How It Works" },
+  { id: "analyser", label: "Try It" },
+  { id: "waitlist", label: "Waitlist" },
+];
+
 const scrollTo = (id) => {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 };
@@ -25,6 +33,7 @@ const scrollTo = (id) => {
 export default function App() {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -32,6 +41,11 @@ export default function App() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNav = (id) => {
+    scrollTo(id);
+    setMobileOpen(false);
+  };
 
   return (
     <>
@@ -44,33 +58,76 @@ export default function App() {
         }`}
       >
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span
-            className="text-xl font-bold tracking-tight"
-            style={{ color: PRIMARY }}
-          >
+          <span className="text-xl font-bold tracking-tight" style={{ color: scrolled ? PRIMARY : "#fff" }}>
             Terrascope
           </span>
+
+          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8">
-            {["features", "how-it-works", "analyser", "waitlist"].map((id) => (
+            {NAV_LINKS.map(({ id, label }) => (
               <button
                 key={id}
-                onClick={() => scrollTo(id)}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors duration-200 capitalize"
+                onClick={() => handleNav(id)}
+                className={`text-sm font-medium transition-colors duration-200 ${
+                  scrolled ? "text-gray-600 hover:text-gray-900" : "text-white/80 hover:text-white"
+                }`}
               >
-                {id.replace("-", " ")}
+                {label}
               </button>
             ))}
           </nav>
-          <button
-            onClick={() => scrollTo("waitlist")}
-            className="px-5 py-2 rounded-lg text-sm font-semibold text-white transition-colors duration-200"
-            style={{ backgroundColor: PRIMARY }}
-            onMouseEnter={(e) => (e.target.style.backgroundColor = "#152C47")}
-            onMouseLeave={(e) => (e.target.style.backgroundColor = PRIMARY)}
-          >
-            Get Early Access
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => scrollTo("analyser")}
+              className="hidden md:block px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
+              style={{ backgroundColor: ACCENT, color: PRIMARY }}
+            >
+              Try the Analyser
+            </button>
+
+            {/* Mobile hamburger */}
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              className="md:hidden p-2 rounded-lg transition-colors"
+              style={{ color: scrolled ? PRIMARY : "#fff" }}
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="md:hidden bg-white border-b border-gray-100 shadow-lg"
+            >
+              <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col gap-1">
+                {NAV_LINKS.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => handleNav(id)}
+                    className="text-left py-3 px-2 text-sm font-medium text-gray-700 hover:text-gray-900 border-b border-gray-50 last:border-0"
+                  >
+                    {label}
+                  </button>
+                ))}
+                <button
+                  onClick={() => handleNav("analyser")}
+                  className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center"
+                  style={{ backgroundColor: ACCENT, color: PRIMARY }}
+                >
+                  Try the Analyser
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       <main>
@@ -83,7 +140,6 @@ export default function App() {
         >
           <div className="max-w-6xl mx-auto px-6 py-24 w-full">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              {/* Left: Text */}
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -103,17 +159,17 @@ export default function App() {
                   The location intelligence layer for data centre developers
                 </p>
                 <p className="text-gray-300 text-lg leading-relaxed mb-10">
-                  Know before you build. Terrascope surfaces water resource,
-                  energy grid, and community risk at any candidate site — so you
-                  can screen dozens of locations in hours, not months.
+                  Know before you build. Terrascope surfaces water, energy grid,
+                  and community risk at any candidate site — so you can screen
+                  dozens of locations in hours, not months.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button
-                    onClick={() => scrollTo("waitlist")}
-                    className="px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 hover:scale-105"
+                    onClick={() => scrollTo("analyser")}
+                    className="px-8 py-4 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
                     style={{ backgroundColor: ACCENT, color: PRIMARY }}
                   >
-                    Join the Waitlist
+                    Try the Analyser
                   </button>
                   <button
                     onClick={() => scrollTo("features")}
@@ -124,7 +180,6 @@ export default function App() {
                 </div>
               </motion.div>
 
-              {/* Right: Remotion animation */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -141,6 +196,7 @@ export default function App() {
                     autoPlay
                     loop
                     controls={false}
+                    acknowledgeRemotionLicense
                     style={{ width: "100%", borderRadius: 16 }}
                   />
                 )}
@@ -156,12 +212,10 @@ export default function App() {
               {[
                 { value: "$64B+", label: "in data centre projects blocked by avoidable site risks" },
                 { value: "3 risk layers", label: "Water, energy & community — analysed in one platform" },
-                { value: "Hours not months", label: "Screen your entire site portfolio before committing capital" },
+                { value: "3 seconds", label: "What used to take 3 months of consulting" },
               ].map(({ value, label }) => (
                 <div key={value} className="flex flex-col items-center gap-1">
-                  <span className="text-2xl font-bold" style={{ color: PRIMARY }}>
-                    {value}
-                  </span>
+                  <span className="text-2xl font-bold" style={{ color: PRIMARY }}>{value}</span>
                   <span className="text-sm text-gray-500">{label}</span>
                 </div>
               ))}
@@ -227,9 +281,7 @@ export default function App() {
                   >
                     {icon}
                   </div>
-                  <h3 className="text-xl font-bold mb-3" style={{ color: PRIMARY }}>
-                    {title}
-                  </h3>
+                  <h3 className="text-xl font-bold mb-3" style={{ color: PRIMARY }}>{title}</h3>
                   <p className="text-gray-500 leading-relaxed">{description}</p>
                 </motion.div>
               ))}
@@ -266,6 +318,7 @@ export default function App() {
                   autoPlay
                   loop
                   controls={false}
+                  acknowledgeRemotionLicense
                   style={{ width: "100%", borderRadius: 16 }}
                 />
               )}
@@ -273,8 +326,11 @@ export default function App() {
           </div>
         </section>
 
+        {/* ── SITE ANALYSER ── */}
+        <SiteAnalyser />
+
         {/* ── TESTIMONIALS ── */}
-        <section className="py-24 bg-white">
+        <section className="py-24 bg-gray-50">
           <div className="max-w-6xl mx-auto px-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -315,14 +371,12 @@ export default function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  className="bg-gray-50 rounded-xl p-8 border border-gray-100"
+                  className="bg-white rounded-xl p-8 border border-gray-100 shadow-sm"
                 >
                   <Quote size={24} className="mb-4" style={{ color: ACCENT }} />
                   <p className="text-gray-700 leading-relaxed mb-6 italic">{quote}</p>
                   <div>
-                    <p className="font-semibold text-sm" style={{ color: PRIMARY }}>
-                      {name}
-                    </p>
+                    <p className="font-semibold text-sm" style={{ color: PRIMARY }}>{name}</p>
                     <p className="text-gray-400 text-sm">{role}</p>
                   </div>
                 </motion.div>
@@ -334,9 +388,7 @@ export default function App() {
         {/* ── FINAL CTA ── */}
         <section
           className="py-24"
-          style={{
-            background: `linear-gradient(135deg, ${PRIMARY} 0%, #0F2040 100%)`,
-          }}
+          style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #0F2040 100%)` }}
         >
           <div className="max-w-3xl mx-auto px-6 text-center">
             <motion.div
@@ -355,7 +407,7 @@ export default function App() {
               </p>
               <button
                 onClick={() => scrollTo("waitlist")}
-                className="px-10 py-4 rounded-lg font-bold text-lg transition-all duration-200 hover:scale-105 flex items-center gap-2 mx-auto"
+                className="px-10 py-4 rounded-lg font-bold text-lg transition-all duration-200 hover:scale-105 inline-flex items-center gap-2"
                 style={{ backgroundColor: ACCENT, color: PRIMARY }}
               >
                 Get Early Access <ArrowRight size={20} />
@@ -364,31 +416,23 @@ export default function App() {
           </div>
         </section>
 
-        {/* ── SITE ANALYSER ── */}
-        <SiteAnalyser />
-
         {/* ── WAITING LIST ── */}
         <WaitlistSection />
       </main>
 
       {/* ── FOOTER ── */}
-      <footer
-        className="py-12 border-t border-gray-100"
-        style={{ backgroundColor: "#FAFAFA" }}
-      >
+      <footer className="py-12 border-t border-gray-100" style={{ backgroundColor: "#FAFAFA" }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            <span className="text-lg font-bold" style={{ color: PRIMARY }}>
-              Terrascope
-            </span>
-            <nav className="flex items-center gap-6">
-              {["features", "how-it-works", "analyser", "waitlist"].map((id) => (
+            <span className="text-lg font-bold" style={{ color: PRIMARY }}>Terrascope</span>
+            <nav className="flex items-center gap-6 flex-wrap justify-center">
+              {NAV_LINKS.map(({ id, label }) => (
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className="text-sm text-gray-400 hover:text-gray-700 transition-colors capitalize"
+                  className="text-sm text-gray-400 hover:text-gray-700 transition-colors"
                 >
-                  {id.replace("-", " ")}
+                  {label}
                 </button>
               ))}
             </nav>

@@ -25,14 +25,12 @@ from backend.analyser import analyse_site
 app = FastAPI()
 
 # ── CORS ────────────────────────────────────────────────────────────────────
-_allowed_origins = os.environ.get(
-    "ALLOWED_ORIGINS", "http://localhost:5173"
-).split(",")
+_allowed_origins = os.environ.get("ALLOWED_ORIGINS", "*").split(",")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_allowed_origins,
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
