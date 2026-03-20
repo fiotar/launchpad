@@ -167,3 +167,20 @@ class TestAnalyseEndpoint:
         data = response.json()
         assert isinstance(data["flags"], list)
         assert len(data["flags"]) > 0
+
+    async def test_high_risk_returns_reasoning(self, client, auth):
+        response = await client.post(
+            "/api/analyse", json={"location": "Mesa, AZ", "size": "large"}, headers=auth
+        )
+        reasoning = response.json()["reasoning"]
+        assert isinstance(reasoning, list)
+        assert len(reasoning) > 0
+        item = reasoning[0]
+        assert all(k in item for k in ("dimension", "label", "risk_level", "detail", "mitigation"))
+        assert item["risk_level"] in ("HIGH", "MEDIUM")
+
+    async def test_safe_site_has_empty_reasoning(self, client, auth):
+        response = await client.post(
+            "/api/analyse", json={"location": "New Albany, OH", "size": "small"}, headers=auth
+        )
+        assert response.json()["reasoning"] == []

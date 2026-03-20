@@ -61,6 +61,14 @@ class AlternativeSite(BaseModel):
     reason: str
 
 
+class RiskReasoning(BaseModel):
+    dimension: str   # "water" | "energy" | "community"
+    label: str       # human-readable label
+    risk_level: str  # "HIGH" | "MEDIUM"
+    detail: str      # why this dimension is risky
+    mitigation: str  # specific steps to address it
+
+
 class AnalyseResponse(BaseModel):
     location: str
     size: str
@@ -68,3 +76,4 @@ class AnalyseResponse(BaseModel):
     verdict: str
     flags: list[str]
     alternatives: list[AlternativeSite]
+    reasoning: list[RiskReasoning]

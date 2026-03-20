@@ -354,6 +354,105 @@ def _get_alternatives(exclude_state: str, size: str) -> list[dict]:
     ]
 
 
+# ── REASONING & MITIGATION ───────────────────────────────────────────────────
+# Tuple format: (detail — why it's risky, mitigation — how to address it)
+# Keys: state name for specific advice, "generic" as fallback.
+
+_REASON: dict[str, dict[str, dict[str, tuple[str, str]]]] = {
+    "water": {
+        "HIGH": {
+            "Arizona":    ("The Phoenix metro faces severe water stress driven by Colorado River Tier 2 shortage declarations. Both Salt River Project and CAP allocations are constrained, limiting evaporative cooling for new large-load facilities.",
+                           "Adopt closed-loop dry cooling or adiabatic towers, reducing water consumption by 80–90%. Engage the Arizona Water Bank Authority early to secure a water supply agreement and commission a site-specific Water Management Plan before permit applications."),
+            "Nevada":     ("Southern Nevada Water Authority is operating under Colorado River Tier 2 shortage restrictions. New large-load cooling systems face increasing permit scrutiny for consumptive water use.",
+                           "Design for minimum water consumption from day one — adiabatic or dry cooling where climate permits. Secure an SNWA industrial water service agreement with dedicated allocation before site commitment."),
+            "California": ("California's DWR water efficiency mandate subjects large industrial users to Tier 3 restrictions during drought years. Many Southern California water agencies face ongoing State Water Project curtailments.",
+                           "Implement on-site water recycling and greywater reclamation. Target a Water Usage Effectiveness (WUE) of <0.5 L/kWh. Pre-negotiate a dedicated water supply agreement with the municipal utility before groundbreaking."),
+            "New Mexico":  ("New Mexico draws from the Rio Grande system, which is under multi-state compact allocation constraints. Industrial water rights for new large facilities are increasingly difficult to permit.",
+                            "Engage the NM Office of the State Engineer to assess permit feasibility before site commitment. Closed-loop cooling with zero discharge design is likely a regulatory requirement."),
+            "generic":    ("This location sits in a high water-stress region where industrial cooling competes with agricultural and municipal demand. Regulatory limits on new consumptive water rights are increasingly common.",
+                           "Design for minimal water consumption — air-side economisers or closed-loop dry coolers can cut demand by 80–90%. Engage the regional water authority on permit requirements before site commitment."),
+        },
+        "MEDIUM": {
+            "Texas":   ("North Texas reservoir levels face cyclical drought pressure. The Trinity River Authority has reported reduced storage in recent years and local permitting requires backup cooling plans.",
+                        "Develop a dual-source cooling water strategy combining utility supply with reclaimed water or groundwater. Include dry-bulb contingency cooling for prolonged drought periods."),
+            "Florida": ("South Florida's Biscayne and Floridan aquifer systems are under stress from population growth and saltwater intrusion. The South Florida Water Management District requires industrial users to demonstrate water efficiency.",
+                        "Specify water-efficient cooling system design and prepare a water management plan. Engage the local water utility on reclaimed water availability for cooling supplementation."),
+            "generic": ("Moderate water stress exists here. While availability is currently adequate, seasonal drought cycles and competing agricultural or municipal demand may periodically tighten supply for new industrial users.",
+                        "Conduct a 10-year hydrological projection for the site watershed. Consider hybrid cooling systems able to switch between wet and dry modes based on real-time reservoir levels."),
+        },
+    },
+    "energy": {
+        "HIGH": {
+            "Virginia":     ("Dominion Energy's PJM transmission zone has the largest commercial interconnection queue in the US — over 40 GW of pending load applications. New capacity agreements are taking 3+ years from application to energisation.",
+                             "Engage a transmission attorney to file a pre-application consultation with Dominion immediately. Explore co-location next to an existing 230 kV or 500 kV substation to bypass the queue. Consider phased energisation (Phase 1 <50 MW) to access faster small-generator interconnection pathways."),
+            "Maryland":     ("PJM/BGE interconnection in the DC Metro corridor is heavily congested. Substations serving established data centre corridors are near capacity, and network upgrades carry significant cost.",
+                             "Work with BGE's Key Accounts team to identify substations with available headroom. Budget 18–30 months for grid connection lead time and include transmission upgrade costs ($5–15M typical) in the project pro forma."),
+            "California":   ("CAISO's grid faces chronic congestion in high-load zones. Renewable intermittency means large industrial loads require expensive on-site backup generation to maintain uptime SLAs.",
+                             "Size on-site battery storage or generator backup to carry 100% of critical load for 4+ hours. Negotiate a firm capacity contract with the utility early. Consider CAISO's Special Facilities programme for large-load customers."),
+            "New York":     ("NYISO Zone J (NYC metro) is one of the most congested wholesale power zones in the US. Con Edison interconnection lead times exceed 18 months with significant network upgrade costs.",
+                             "Target locations outside Zone J — Zone G (Hudson Valley) or Zone C (upstate) offer significantly better interconnection economics. If NYC is essential, budget $5–20M for network reinforcement and engage Con Ed's Large Customer team immediately."),
+            "Massachusetts":("ISO-NE interconnection queue in eastern Massachusetts is growing rapidly. Eversource large-load lead times now exceed 24 months in the Greater Boston area, with network upgrade costs escalating.",
+                             "File a preliminary interconnection enquiry with Eversource within 30 days of site assessment. Consider western Massachusetts or Connecticut to access less congested ISO-NE zones."),
+            "Hawaii":       ("HECO's isolated island grid has limited capacity for large new loads. High renewable penetration creates intermittency risk, and diesel backup generation is a significant operational cost.",
+                             "Size on-site generation (solar + battery) to supply at least 60% of load. Negotiate a grid service agreement with HECO under the Large Customer programme. Factor diesel backup costs into 10-year operating model."),
+            "generic":      ("The regional grid operator's interconnection queue for new large commercial loads is significantly backlogged. Securing reliable, cost-competitive power at scale requires early utility engagement and potentially multi-year lead times.",
+                             "Initiate utility pre-application meetings immediately. Engage an independent power engineer to assess available substation capacity within a 15-mile radius. Budget for transmission upgrade costs and a 12–24 month grid connection lead time."),
+        },
+        "MEDIUM": {
+            "generic": ("The local grid operator faces moderate congestion, particularly during peak summer demand periods. While interconnection is achievable, lead times and network upgrade costs may be higher than in less-constrained markets.",
+                        "File a preliminary interconnection enquiry with the local utility within the first 30 days of site assessment. Request a cost estimate for network upgrades and incorporate this into your project schedule and budget."),
+        },
+    },
+    "community": {
+        "HIGH": {
+            "Virginia":      ("Loudoun and Prince William counties face active data centre moratorium pressure. Opposition centres on noise, traffic, visual impact, and the perception of 'zombie campuses' that consume power and water without creating meaningful local employment.",
+                              "Commission an independent economic impact study projecting 200+ permanent jobs and $50M+ in annual tax revenue. Engage a dedicated community relations firm 12 months before planning application. Offer a binding Community Benefits Agreement (CBA) guaranteeing local hiring, school funding contributions, and independent noise monitoring."),
+            "California":    ("California's CEQA environmental review is the most extensive in the US. Suburban community opposition routinely triggers full Environmental Impact Reports, adding 18–36 months and $2–5M to project timelines.",
+                              "Retain a CEQA specialist from day one. Proactively commission traffic, noise, and visual impact studies before filing. Establish a Community Advisory Panel to co-design mitigation measures — industry data shows this reduces formal CEQA challenges by ~40%."),
+            "New York":      ("Dense urban and suburban communities in the New York Metro are highly organised against large industrial development. Noise ordinances, traffic studies, and visual screening requirements are strictly enforced. Local elected officials frequently lead opposition campaigns.",
+                              "Target brownfield or established industrial-zoned sites to minimise residential interface. Engage local unions on a jobs pipeline — a commitment of 150+ construction and 50+ permanent positions typically shifts the community calculus significantly. Conduct structured community engagement at least 12 months before planning application."),
+            "Massachusetts": ("Greater Boston communities have organised effectively against data centre proposals, citing noise from cooling equipment, heavy construction traffic, and limited direct employment relative to land use and energy consumption.",
+                              "Engage MassDevelopment to identify pre-approved industrial sites. Offer a Community Benefits Agreement including a $1M+ community investment fund, local hiring commitments (minimum 30% of construction from local trades), and third-party noise monitoring throughout construction and operation."),
+            "Oregon":        ("Portland Metro and suburban Oregon communities have seen rising opposition to large data centres citing power grid strain, water use, and displacement of other industrial users from scarce land.",
+                              "Engage Prosper Portland (the city's economic development agency) early to identify supported industrial zones. Commission an independent power and water impact assessment. A Community Benefits Agreement with a local hire commitment and community investment fund is strongly advised."),
+            "generic":       ("This location faces elevated community and political opposition risk. Common flashpoints include noise from cooling systems, construction traffic, visual impact of large buildings, and concerns about water and energy consumption relative to local job creation.",
+                              "Hire a specialist community engagement firm before any public filing. Commission independent noise, traffic, and visual impact assessments. Structure a Community Benefits Agreement offering local employment guarantees (target minimum 150 permanent jobs), school or infrastructure contributions, and ongoing community liaison. Proactive transparency — sharing energy and water efficiency data publicly — significantly reduces organised opposition."),
+        },
+        "MEDIUM": {
+            "generic": ("Community sentiment is mixed in this area. While no formal opposition has emerged, local planning commissions are increasingly scrutinising data centre applications for noise, traffic, and resource consumption impacts.",
+                        "Engage the local planning authority in pre-application discussions to understand specific concerns. Commission a noise impact assessment and traffic study early. A proactive community briefing — before any formal application — significantly reduces the risk of organised opposition emerging later in the process."),
+        },
+    },
+}
+
+_DIM_LABELS = {"water": "Water & Cooling", "energy": "Energy Grid", "community": "Community & Political"}
+
+
+def _get_reasoning(state: str, scores: dict[str, int]) -> list[dict]:
+    """Generate dimension-level reasoning and mitigation advice for elevated risk scores."""
+    result = []
+    for dim in ("water", "energy", "community"):
+        score = scores[dim]
+        if score >= 60:
+            level = "HIGH"
+        elif score >= 40:
+            level = "MEDIUM"
+        else:
+            continue  # LOW risk — no reasoning needed
+
+        level_data = _REASON.get(dim, {}).get(level, {})
+        detail, mitigation = level_data.get(state) or level_data.get("generic", ("", ""))
+
+        result.append({
+            "dimension": dim,
+            "label":     _DIM_LABELS[dim],
+            "risk_level": level,
+            "detail":    detail,
+            "mitigation": mitigation,
+        })
+    return result
+
+
 # ── PUBLIC API ────────────────────────────────────────────────────────────────
 
 async def analyse_site(location: str, size: str) -> dict:
@@ -381,6 +480,7 @@ async def analyse_site(location: str, size: str) -> dict:
     verdict      = _get_verdict(scores)
     flags        = _get_flags(state, scores)
     alternatives = _get_alternatives(exclude_state=state, size=size) if verdict != "SAFE TO BUILD" else []
+    reasoning    = _get_reasoning(state, scores) if verdict != "SAFE TO BUILD" else []
 
     return {
         "location":     geo["canonical"],
@@ -389,6 +489,7 @@ async def analyse_site(location: str, size: str) -> dict:
         "verdict":      verdict,
         "flags":        flags,
         "alternatives": alternatives,
+        "reasoning":    reasoning,
     }
 
 

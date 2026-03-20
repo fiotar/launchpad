@@ -25,6 +25,7 @@ const NAV_LINKS = [
   { id: "features", label: "Features" },
   { id: "how-it-works", label: "How It Works" },
   { id: "analyser", label: "Try It" },
+  { id: "about", label: "About" },
   { id: "waitlist", label: "Waitlist" },
 ];
 
@@ -422,6 +423,120 @@ export default function App() {
                   </div>
                 </motion.div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── ABOUT US ── */}
+        <section id="about" className="py-24 bg-white">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+              {/* Left: story */}
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55 }}
+              >
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-5"
+                  style={{ backgroundColor: "rgba(56,189,248,0.1)", color: ACCENT }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                  About Terrascope
+                </div>
+                <h2 className="text-4xl font-bold mb-6 leading-tight" style={{ color: PRIMARY }}>
+                  We've seen what bad site selection costs
+                </h2>
+                <p className="text-gray-500 leading-relaxed mb-4">
+                  Terrascope was founded by a team of infrastructure developers and
+                  data scientists who spent years watching projects fail — not because
+                  of bad engineering, but because critical site risks were discovered
+                  too late.
+                </p>
+                <p className="text-gray-500 leading-relaxed mb-4">
+                  A $400M campus stalled for three years over a grid interconnection
+                  queue nobody modelled. A 200-acre site abandoned after a community
+                  opposition campaign that took 18 months to organise. Water rights
+                  disputes that surfaced during due diligence — after the land was
+                  under contract.
+                </p>
+                <p className="text-gray-500 leading-relaxed mb-8">
+                  We built Terrascope because the data to avoid all of this exists —
+                  it's just scattered across dozens of regulatory bodies, utility
+                  filings, and planning archives. We bring it together, score it, and
+                  surface it in seconds.
+                </p>
+                <div className="flex flex-wrap gap-6">
+                  {[
+                    { value: "$64B+", label: "in failed site investments we've studied" },
+                    { value: "15+", label: "markets covered across the US" },
+                    { value: "3 sec", label: "from input to risk score" },
+                  ].map(({ value, label }) => (
+                    <div key={value}>
+                      <div className="text-2xl font-bold" style={{ color: PRIMARY }}>{value}</div>
+                      <div className="text-xs text-gray-400 mt-0.5 max-w-[120px]">{label}</div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* Right: team */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.55, delay: 0.1 }}
+                className="flex flex-col gap-5"
+              >
+                {[
+                  {
+                    name: "Mia Hollander",
+                    role: "CEO & Co-founder",
+                    bio: "Former VP of Site Development at EdgeCore. Led 12 hyperscale campus acquisitions across North America and Europe.",
+                    initials: "MH",
+                  },
+                  {
+                    name: "Dev Krishnamurthy",
+                    role: "CTO & Co-founder",
+                    bio: "Previously led grid infrastructure data at FERC. Built real-time transmission analytics tools used by three US ISOs.",
+                    initials: "DK",
+                  },
+                  {
+                    name: "Lena Bachmann",
+                    role: "Head of Data Science",
+                    bio: "Hydrologist turned data scientist. Published WRI-cited research on industrial water stress modelling across arid US markets.",
+                    initials: "LB",
+                  },
+                  {
+                    name: "James Okafor",
+                    role: "Head of Policy & Community",
+                    bio: "Former planning commissioner in Loudoun County, VA. Advisor on 20+ data centre community engagement processes.",
+                    initials: "JO",
+                  },
+                ].map(({ name, role, bio, initials }, i) => (
+                  <motion.div
+                    key={name}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: i * 0.08 }}
+                    className="flex items-start gap-4 p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200"
+                  >
+                    <div
+                      className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
+                      style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #2563EB 100%)` }}
+                    >
+                      {initials}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm" style={{ color: PRIMARY }}>{name}</p>
+                      <p className="text-xs font-medium mb-1.5" style={{ color: ACCENT }}>{role}</p>
+                      <p className="text-xs text-gray-500 leading-relaxed">{bio}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
           </div>
         </section>

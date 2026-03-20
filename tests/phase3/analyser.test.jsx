@@ -56,6 +56,15 @@ describe("Phase 3: Site Analyser", () => {
             reason: "Excellent water supply",
           },
         ],
+        reasoning: [
+          {
+            dimension: "water",
+            label: "Water & Cooling",
+            risk_level: "HIGH",
+            detail: "Severe water stress in this region.",
+            mitigation: "Adopt closed-loop dry cooling systems.",
+          },
+        ],
       }),
     });
 
@@ -87,6 +96,15 @@ describe("Phase 3: Site Analyser", () => {
             scores: { water: 26, energy: 29, community: 22 },
             verdict: "SAFE TO BUILD",
             reason: "Excellent water supply",
+          },
+        ],
+        reasoning: [
+          {
+            dimension: "water",
+            label: "Water & Cooling",
+            risk_level: "HIGH",
+            detail: "Severe water stress in this region.",
+            mitigation: "Adopt closed-loop dry cooling systems.",
           },
         ],
       }),

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Zap, Droplets, Users, AlertTriangle, CheckCircle, AlertCircle, RotateCcw, Lock } from "lucide-react";
+import { MapPin, Zap, Droplets, Users, AlertTriangle, CheckCircle, AlertCircle, RotateCcw, Lock, Lightbulb } from "lucide-react";
 
 const PRIMARY = "#1E3A5F";
 const ACCENT = "#38BDF8";
@@ -63,6 +63,46 @@ function ScoreBar({ label, icon, score }) {
         />
       </div>
     </div>
+  );
+}
+
+const DIM_ICONS = {
+  water: <Droplets size={14} />,
+  energy: <Zap size={14} />,
+  community: <Users size={14} />,
+};
+
+const RISK_STYLE = {
+  HIGH:   { badge: "bg-red-100 text-red-700",    border: "border-red-100",    icon: "text-red-500" },
+  MEDIUM: { badge: "bg-amber-100 text-amber-700", border: "border-amber-100", icon: "text-amber-500" },
+};
+
+function ReasoningCard({ item, delay }) {
+  const style = RISK_STYLE[item.risk_level] || RISK_STYLE.MEDIUM;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay }}
+      className={`rounded-xl border ${style.border} bg-white overflow-hidden`}
+    >
+      <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+          <span className={style.icon}>{DIM_ICONS[item.dimension]}</span>
+          {item.label}
+        </div>
+        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${style.badge}`}>
+          {item.risk_level}
+        </span>
+      </div>
+      <div className="px-4 py-3 flex flex-col gap-3">
+        <p className="text-xs text-gray-600 leading-relaxed">{item.detail}</p>
+        <div className="flex items-start gap-2 bg-sky-50 rounded-lg px-3 py-2.5">
+          <Lightbulb size={13} className="text-sky-500 shrink-0 mt-0.5" />
+          <p className="text-xs text-sky-700 leading-relaxed">{item.mitigation}</p>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -148,6 +188,20 @@ function ResultsCard({ result, onReset }) {
               <span className="text-amber-500 mt-0.5 shrink-0">⚠</span> {flag}
             </p>
           ))}
+        </div>
+      )}
+
+      {/* Risk reasoning & mitigation */}
+      {result.reasoning && result.reasoning.length > 0 && (
+        <div className="border-x border-gray-100 bg-gray-50 px-6 py-5">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+            Risk Analysis &amp; Mitigation
+          </p>
+          <div className="flex flex-col gap-3">
+            {result.reasoning.map((item, i) => (
+              <ReasoningCard key={item.dimension} item={item} delay={i * 0.08} />
+            ))}
+          </div>
         </div>
       )}
 
