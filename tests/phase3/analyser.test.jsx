@@ -21,7 +21,7 @@ describe("Phase 3: Site Analyser", () => {
 
   it("has a location input", () => {
     render(<App />);
-    expect(screen.getByPlaceholderText(/Phoenix, AZ/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/city, zip code/i)).toBeInTheDocument();
   });
 
   it("has a size dropdown", () => {
@@ -60,7 +60,7 @@ describe("Phase 3: Site Analyser", () => {
     });
 
     render(<App />);
-    fireEvent.change(screen.getByPlaceholderText(/Phoenix, AZ/i), {
+    fireEvent.change(screen.getByPlaceholderText(/city, zip code/i), {
       target: { value: "Phoenix, AZ" },
     });
     fireEvent.click(screen.getByRole("button", { name: /analyse site/i }));
@@ -93,7 +93,7 @@ describe("Phase 3: Site Analyser", () => {
     });
 
     render(<App />);
-    fireEvent.change(screen.getByPlaceholderText(/Phoenix, AZ/i), {
+    fireEvent.change(screen.getByPlaceholderText(/city, zip code/i), {
       target: { value: "Phoenix, AZ" },
     });
     fireEvent.click(screen.getByRole("button", { name: /analyse site/i }));
@@ -113,7 +113,7 @@ describe("Phase 3: Site Analyser", () => {
     });
 
     render(<App />);
-    fireEvent.change(screen.getByPlaceholderText(/Phoenix, AZ/i), {
+    fireEvent.change(screen.getByPlaceholderText(/city, zip code/i), {
       target: { value: "Atlantis, XX" },
     });
     fireEvent.click(screen.getByRole("button", { name: /analyse site/i }));

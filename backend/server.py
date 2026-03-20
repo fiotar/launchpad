@@ -1,4 +1,5 @@
 import os
+import secrets
 import sqlite3
 import time
 from collections import defaultdict
@@ -8,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, HTTPException, Request, Header
+from fastapi import FastAPI, HTTPException, Request, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 
@@ -19,8 +20,10 @@ from backend.models import (
     WaitlistCount,
     AnalyseRequest,
     AnalyseResponse,
+    LoginRequest,
+    LoginResponse,
 )
-from backend.analyser import analyse_site
+from backend.analyser import analyse_site, get_all_areas
 
 app = FastAPI()
 
@@ -133,16 +136,46 @@ async def export_waitlist(x_api_key: str = Header(default=None)):
     return [dict(row) for row in rows]
 
 
+# ── AUTH ─────────────────────────────────────────────────────────────────────
+_active_tokens: set[str] = set()
+
+
+def require_auth(authorization: str = Header(default=None)) -> str:
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required. Please log in.")
+    token = authorization.split(" ", 1)[1]
+    if token not in _active_tokens:
+        raise HTTPException(status_code=401, detail="Invalid or expired token. Please log in again.")
+    return token
+
+
+@app.post("/api/auth/login", response_model=LoginResponse)
+async def login(body: LoginRequest):
+    demo_email = os.environ.get("DEMO_EMAIL", "demo@terrascope.com")
+    demo_password = os.environ.get("DEMO_PASSWORD", "Terrascope2024")
+    if body.email.lower() != demo_email.lower() or body.password != demo_password:
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+    token = secrets.token_urlsafe(32)
+    _active_tokens.add(token)
+    return LoginResponse(token=token, email=body.email)
+
+
+@app.post("/api/auth/logout")
+async def logout(token: str = Depends(require_auth)):
+    _active_tokens.discard(token)
+    return {"success": True}
+
+
 # ── ANALYSER ─────────────────────────────────────────────────────────────────
+@app.get("/api/risk-map")
+async def risk_map():
+    """Public endpoint — returns all areas with coordinates for the map."""
+    return get_all_areas()
+
+
 @app.post("/api/analyse", response_model=AnalyseResponse)
-async def analyse(body: AnalyseRequest):
-    try:
-        result = analyse_site(body.location, body.size.value)
-    except KeyError:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Location '{body.location}' not found. Try a US city like 'Phoenix, AZ' or 'Des Moines, IA'.",
-        )
+async def analyse(body: AnalyseRequest, token: str = Depends(require_auth)):
+    result = await analyse_site(body.location, body.size.value)
     return result
 
 

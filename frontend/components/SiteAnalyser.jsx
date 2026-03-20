@@ -200,7 +200,7 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
       if (res.ok) {
         setResult(data);
       } else if (res.status === 404) {
-        setError(`Location not found. Try a US city like "Phoenix, AZ" or "Des Moines, IA".`);
+        setError(data.detail || `Location not found. Try a city name, zip code, or "City, State" format.`);
       } else {
         setError("Something went wrong. Please try again.");
       }
@@ -265,8 +265,8 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
             Try the Site Analyser
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            Enter any US city and your planned data centre size. Terrascope scores
-            the location across all three risk dimensions in seconds.
+            Enter any US location — city, zip code, suburb, or street address.
+            Terrascope scores it across all three risk dimensions using real data.
           </p>
         </motion.div>
 
@@ -286,7 +286,7 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Phoenix, AZ"
+                  placeholder="City, zip code, suburb or address…"
                   className="w-full px-4 py-3 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-200"
                 />
               </div>
@@ -334,18 +334,18 @@ export default function SiteAnalyser({ token, onLoginRequest }) {
                 )}
               </button>
 
-              {/* Example cities */}
+              {/* Example searches */}
               <div className="pt-2">
                 <p className="text-xs text-gray-400 mb-2">Try these examples:</p>
                 <div className="flex flex-wrap gap-2">
-                  {["Phoenix, AZ", "Des Moines, IA", "Ashburn, VA", "Columbus, OH"].map((city) => (
+                  {["Ashburn, VA", "20001", "Brooklyn, NY", "Irving, TX", "New Albany, OH"].map((ex) => (
                     <button
-                      key={city}
+                      key={ex}
                       type="button"
-                      onClick={() => setLocation(city)}
+                      onClick={() => setLocation(ex)}
                       className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-500 hover:border-sky-300 hover:text-sky-600 transition-colors"
                     >
-                      {city}
+                      {ex}
                     </button>
                   ))}
                 </div>

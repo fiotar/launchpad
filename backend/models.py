@@ -23,6 +23,18 @@ class WaitlistCount(BaseModel):
     count: int
 
 
+# ── Auth models ───────────────────────────────────────────────────────────────
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class LoginResponse(BaseModel):
+    token: str
+    email: str
+
+
 # ── Analyser models ───────────────────────────────────────────────────────────
 
 class DataCentreSize(str, Enum):
