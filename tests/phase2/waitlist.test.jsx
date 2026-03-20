@@ -28,7 +28,7 @@ describe("Phase 2: Waitlist Form", () => {
 
   it("has an interest dropdown", () => {
     render(<App />);
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getByLabelText(/what excites you most/i)).toBeInTheDocument();
   });
 
   it("has a submit button", () => {
