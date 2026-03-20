@@ -1,2 +1,5 @@
-# api/models.py — Your Pydantic models go here
-# Will be built starting with Tier 1
+from pydantic import BaseModel
+
+
+class HealthResponse(BaseModel):
+    status: str
