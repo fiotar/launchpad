@@ -365,7 +365,7 @@ export default function App() {
         </section>
 
         {/* ── US RISK MAP ── */}
-        <USRiskMap />
+        <USRiskMap token={token} onLoginRequest={() => setShowLogin(true)} />
 
         {/* ── SITE ANALYSER ── */}
         <SiteAnalyser token={token} onLoginRequest={() => setShowLogin(true)} />

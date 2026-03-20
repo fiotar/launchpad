@@ -48,10 +48,9 @@ describe("Phase 2: Waitlist Form", () => {
   });
 
   it("shows success message after valid submission", async () => {
-    // Mount triggers: (1) waitlist count, (2) risk-map; then submit is (3)
+    // Mount triggers (1) waitlist count; risk-map skipped (no token); submit is (2)
     global.fetch
       .mockResolvedValueOnce({ ok: true, json: async () => ({ count: 10 }) })
-      .mockResolvedValueOnce({ ok: true, json: async () => ([]) })
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ success: true, message: "You're on the list!", position: 5 }),
@@ -69,10 +68,9 @@ describe("Phase 2: Waitlist Form", () => {
   });
 
   it("shows already-on-list message for duplicate email", async () => {
-    // Mount triggers: (1) waitlist count, (2) risk-map; then submit is (3)
+    // Mount triggers (1) waitlist count; risk-map skipped (no token); submit is (2)
     global.fetch
       .mockResolvedValueOnce({ ok: true, json: async () => ({ count: 10 }) })
-      .mockResolvedValueOnce({ ok: true, json: async () => ([]) })
       .mockResolvedValueOnce({
         ok: false,
         status: 409,

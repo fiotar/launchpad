@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 import { motion } from "framer-motion";
+import { Lock } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 
 const PRIMARY = "#1E3A5F";
@@ -18,11 +19,12 @@ const LEGEND = [
   { label: "High Risk", color: "#EF4444" },
 ];
 
-export default function USRiskMap() {
+export default function USRiskMap({ token, onLoginRequest }) {
   const [areas, setAreas] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!token) { setLoading(false); return; }
     fetch("/api/risk-map")
       .then((r) => r.json())
       .then((data) => {
@@ -30,10 +32,45 @@ export default function USRiskMap() {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [token]);
 
   return (
-    <section id="risk-map" className="py-24 bg-gray-50">
+    <section id="risk-map" className="py-24 bg-gray-50 relative">
+      {/* Auth overlay */}
+      {!token && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center"
+          style={{ background: "rgba(249,250,251,0.85)", backdropFilter: "blur(6px)" }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-center px-8 py-10 rounded-2xl border border-gray-200 bg-white shadow-xl max-w-sm mx-4"
+          >
+            <div
+              className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-5"
+              style={{ backgroundColor: "rgba(30,58,95,0.08)" }}
+            >
+              <Lock size={24} style={{ color: PRIMARY }} />
+            </div>
+            <h3 className="text-xl font-bold mb-2" style={{ color: PRIMARY }}>
+              Premium feature
+            </h3>
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+              The interactive risk map is available to Terrascope subscribers.
+              Sign in to explore site risk across all US markets.
+            </p>
+            <button
+              onClick={onLoginRequest}
+              className="px-8 py-3 rounded-lg font-semibold text-white text-sm transition-all duration-200 hover:opacity-90"
+              style={{ backgroundColor: PRIMARY }}
+            >
+              Sign In to View Map
+            </button>
+          </motion.div>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
