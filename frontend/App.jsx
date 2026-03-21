@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Player } from "@remotion/player";
 import {
@@ -14,10 +15,8 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { HeroComposition } from "./components/HeroComposition";
-import { HowItWorksComposition } from "./components/HowItWorksComposition";
 import WaitlistSection from "./components/WaitlistSection";
-import SiteAnalyser from "./components/SiteAnalyser";
-import LoginModal from "./components/LoginModal";
+import AnalyserPage from "./pages/AnalyserPage";
 
 
 const PRIMARY = "#1E3A5F";
@@ -26,7 +25,6 @@ const ACCENT = "#38BDF8";
 const NAV_LINKS = [
   { id: "features", label: "Features" },
   { id: "how-it-works", label: "How It Works" },
-  { id: "analyser", label: "Try It" },
   { id: "about", label: "About" },
   { id: "waitlist", label: "Waitlist" },
 ];
@@ -130,12 +128,11 @@ function HowItWorksCarousel() {
   );
 }
 
-export default function App() {
+function LandingPage() {
+  const navigate = useNavigate();
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [token, setToken] = useState(() => localStorage.getItem("terrascope_token") || "");
-  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -143,21 +140,6 @@ export default function App() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const handleLoginSuccess = (newToken) => {
-    setToken(newToken);
-    setShowLogin(false);
-    setTimeout(() => scrollTo("analyser"), 300);
-  };
-
-  const handleLogout = () => {
-    fetch("/api/auth/logout", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {});
-    localStorage.removeItem("terrascope_token");
-    setToken("");
-  };
 
   const handleNav = (id) => {
     scrollTo(id);
@@ -199,23 +181,13 @@ export default function App() {
           </nav>
 
           <div className="flex items-center gap-3">
-            {token ? (
-              <button
-                onClick={handleLogout}
-                className="hidden md:block px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border"
-                style={{ borderColor: scrolled ? "#CBD5E1" : "rgba(255,255,255,0.3)", color: scrolled ? "#64748B" : "rgba(255,255,255,0.7)" }}
-              >
-                Sign Out
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowLogin(true)}
-                className="hidden md:block px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
-                style={{ backgroundColor: ACCENT, color: PRIMARY }}
-              >
-                Sign In
-              </button>
-            )}
+            <button
+              onClick={() => navigate("/analyse")}
+              className="hidden md:block px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 hover:opacity-90"
+              style={{ backgroundColor: ACCENT, color: PRIMARY }}
+            >
+              Try It Free
+            </button>
 
             {/* Mobile hamburger */}
             <button
@@ -248,22 +220,13 @@ export default function App() {
                     {label}
                   </button>
                 ))}
-                {token ? (
-                  <button
-                    onClick={() => { handleLogout(); setMobileOpen(false); }}
-                    className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center border border-gray-200 text-gray-600"
-                  >
-                    Sign Out
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => { setShowLogin(true); setMobileOpen(false); }}
-                    className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center"
-                    style={{ backgroundColor: ACCENT, color: PRIMARY }}
-                  >
-                    Sign In
-                  </button>
-                )}
+                <button
+                  onClick={() => { navigate("/analyse"); setMobileOpen(false); }}
+                  className="mt-2 py-3 px-4 rounded-lg text-sm font-semibold text-center"
+                  style={{ backgroundColor: ACCENT, color: PRIMARY }}
+                >
+                  Try It Free
+                </button>
               </div>
             </motion.div>
           )}
@@ -307,7 +270,7 @@ export default function App() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <button
-                    onClick={() => scrollTo("analyser")}
+                    onClick={() => navigate("/analyse")}
                     className="px-8 py-4 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
                     style={{ backgroundColor: ACCENT, color: PRIMARY }}
                   >
@@ -454,9 +417,6 @@ export default function App() {
             </div>
           </div>
         </section>
-
-        {/* ── SITE ANALYSER + MAP ── */}
-        <SiteAnalyser token={token} onLoginRequest={() => setShowLogin(true)} />
 
         {/* ── TESTIMONIALS ── */}
         <section className="py-24 bg-gray-50">
@@ -690,14 +650,6 @@ export default function App() {
         <WaitlistSection />
       </main>
 
-      {/* ── LOGIN MODAL ── */}
-      {showLogin && (
-        <LoginModal
-          onClose={() => setShowLogin(false)}
-          onSuccess={handleLoginSuccess}
-        />
-      )}
-
       {/* ── FOOTER ── */}
       <footer className="py-12 border-t border-gray-100" style={{ backgroundColor: "#FAFAFA" }}>
         <div className="max-w-6xl mx-auto px-6">
@@ -730,5 +682,16 @@ export default function App() {
         </div>
       </footer>
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/analyse" element={<AnalyserPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
