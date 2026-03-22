@@ -557,55 +557,46 @@ function LandingPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.55, delay: 0.1 }}
-                className="flex flex-col gap-5"
+                className="flex flex-col"
               >
-                {[
-                  {
-                    name: "Fiola Tariang",
-                    role: "Co-founder",
-                    initials: "FT",
-                  },
-                  {
-                    name: "Aishani Grover",
-                    role: "Co-founder",
-                    initials: "AG",
-                  },
-                  {
-                    name: "Sherwin Stanley Isaac",
-                    role: "Co-founder",
-                    initials: "SS",
-                  },
-                  {
-                    name: "Edgar Khieu",
-                    role: "Co-founder",
-                    initials: "EK",
-                  },
-                  {
-                    name: "Tayyab Rana",
-                    role: "Co-founder",
-                    initials: "TR",
-                  },
-                ].map(({ name, role, initials }, i) => (
-                  <motion.div
-                    key={name}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: i * 0.08 }}
-                    className="flex items-center gap-4 p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200"
-                  >
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-                      style={{ background: `linear-gradient(135deg, ${PRIMARY} 0%, #2563EB 100%)` }}
+                {/* Section label */}
+                <div className="mb-6">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">
+                    The Founding Team
+                  </p>
+                  <div className="w-8 h-0.5 rounded-full" style={{ backgroundColor: ACCENT }} />
+                </div>
+
+                {/* Team grid — 2 columns */}
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { name: "Fiola Tariang",       role: "Co-founder", initials: "FT", gradient: "135deg, #1E3A5F 0%, #2563EB 100%" },
+                    { name: "Aishani Grover",       role: "Co-founder", initials: "AG", gradient: "135deg, #0F4C81 0%, #38BDF8 100%" },
+                    { name: "Sherwin Stanley Isaac", role: "Co-founder", initials: "SS", gradient: "135deg, #1E3A5F 0%, #0EA5E9 100%" },
+                    { name: "Edgar Khieu",           role: "Co-founder", initials: "EK", gradient: "135deg, #1D4ED8 0%, #38BDF8 100%" },
+                    { name: "Tayyab Rana",           role: "Co-founder", initials: "TR", gradient: "135deg, #1E3A5F 0%, #3B82F6 100%" },
+                  ].map(({ name, role, initials, gradient }, i) => (
+                    <motion.div
+                      key={name}
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.4, delay: i * 0.07 }}
+                      className="flex flex-col items-center text-center gap-3 p-5 rounded-2xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-200"
                     >
-                      {initials}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-sm" style={{ color: PRIMARY }}>{name}</p>
-                      <p className="text-xs font-medium" style={{ color: ACCENT }}>{role}</p>
-                    </div>
-                  </motion.div>
-                ))}
+                      <div
+                        className="w-14 h-14 rounded-full flex items-center justify-center text-base font-bold text-white shadow-sm"
+                        style={{ background: `linear-gradient(${gradient})` }}
+                      >
+                        {initials}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-sm leading-snug" style={{ color: PRIMARY }}>{name}</p>
+                        <p className="text-xs font-medium mt-0.5" style={{ color: ACCENT }}>{role}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </motion.div>
             </div>
           </div>
