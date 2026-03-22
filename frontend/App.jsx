@@ -315,9 +315,9 @@ function LandingPage() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
               {[
-                { value: "$64B+", label: "in data centre projects blocked by avoidable site risks" },
-                { value: "3 risk layers", label: "Water, energy & community — analysed in one platform" },
-                { value: "3 seconds", label: "What used to take 3 months of consulting" },
+                { value: "$64B+", label: "in US projects blocked or delayed by community opposition (cumulative to Q1 2025 — Data Center Watch)" },
+                { value: "1 in 3", label: "US data centres already sit in high or extreme water-stress zones (S&P Global Sustainable1)" },
+                { value: "4+ years", label: "median US grid interconnection wait — up from under 2 years in 2007 (Lawrence Berkeley National Lab, 2025)" },
               ].map(({ value, label }) => (
                 <div key={value} className="flex flex-col items-center gap-1">
                   <span className="text-2xl font-bold" style={{ color: PRIMARY }}>{value}</span>
@@ -510,14 +510,25 @@ function LandingPage() {
                 </p>
                 <div className="flex flex-wrap gap-6 mb-10">
                   {[
-                    { value: "$64B+", label: "in failed site investments we've studied" },
-                    { value: "15+", label: "markets covered across the US" },
-                    { value: "3 sec", label: "from input to risk score" },
+                    { value: "$64B+", label: "in US projects stalled or killed — cumulative to Q1 2025¹" },
+                    { value: "77%", label: "of US interconnection requests are ultimately withdrawn²" },
+                    { value: "~20%", label: "of planned global projects at risk from grid congestion³" },
                   ].map(({ value, label }) => (
                     <div key={value}>
                       <div className="text-2xl font-bold" style={{ color: PRIMARY }}>{value}</div>
                       <div className="text-xs text-gray-400 mt-0.5 max-w-[120px]">{label}</div>
                     </div>
+                  ))}
+                </div>
+
+                {/* Footnotes */}
+                <div className="flex flex-col gap-0.5 mb-8">
+                  {[
+                    "¹ Data Center Watch, May 2025 — US only, cumulative (not annual)",
+                    "² Lawrence Berkeley National Lab, Queued Up 2025 Edition — all generator types, 2000–2024 cohort",
+                    "³ IEA, Energy and AI, April 2025 — global figure",
+                  ].map((note) => (
+                    <p key={note} className="text-xs text-gray-400 leading-relaxed">{note}</p>
                   ))}
                 </div>
 
