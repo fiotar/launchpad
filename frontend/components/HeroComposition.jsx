@@ -109,7 +109,7 @@ export function HeroComposition() {
         }}
       >
         {/* Header */}
-        <div style={{ marginBottom: 24 }}>
+        <div style={{ marginBottom: 16 }}>
           <div
             style={{
               fontSize: 11,
@@ -134,7 +134,7 @@ export function HeroComposition() {
           style={{
             height: 1,
             backgroundColor: "rgba(255,255,255,0.06)",
-            marginBottom: 24,
+            marginBottom: 16,
           }}
         />
 

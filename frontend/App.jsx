@@ -296,7 +296,7 @@ function LandingPage() {
                     component={HeroComposition}
                     durationInFrames={180}
                     compositionWidth={540}
-                    compositionHeight={360}
+                    compositionHeight={420}
                     fps={30}
                     autoPlay
                     loop
